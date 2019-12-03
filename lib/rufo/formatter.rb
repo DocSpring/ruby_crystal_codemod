@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "ripper"
+require 'byebug'
 
 class Rufo::Formatter
   include Rufo::Settings
@@ -1168,6 +1169,17 @@ class Rufo::Formatter
     # [:command, name, args]
     _, name, args = node
 
+    if name && name[0] == :@ident && name[1] == "require_relative"
+      @tokens.last[2] = 'require'
+
+      require_path = args[1][0][1][1][1]
+      if !require_path.match?(/^.\//)
+        # TODO: Can't figure out how to modify the path in here.
+        # So just set a global variable and wait for the write call as a workaround.
+        @wait_for_consume_token_count_then_set_relative_path = 2
+      end
+    end
+
     base_column = current_token_column
 
     push_call(node) do
@@ -1261,6 +1273,11 @@ class Rufo::Formatter
   end
 
   def visit_command_args(args, base_column)
+    if @wait_for_visit_command_args
+      @wait_for_visit_command_args = false
+      @wait_for_string
+    end
+
     needed_indent = @column
     args_is_def_class_or_module = false
     param_column = current_token_column
@@ -3104,11 +3121,26 @@ class Rufo::Formatter
 
   def consume_token(kind)
     check kind
-    consume_token_value(current_token_value)
+
+    value = current_token_value
+    if kind == :on_ident && value == '__dir__'
+      value = "__DIR__"
+    end
+
+    consume_token_value(value)
     next_token
   end
 
   def consume_token_value(value)
+    # This is some pretty amazing code
+    if @wait_for_consume_token_count_then_set_relative_path &&
+        @wait_for_consume_token_count_then_set_relative_path > 0
+      @wait_for_consume_token_count_then_set_relative_path -= 1
+      if @wait_for_consume_token_count_then_set_relative_path == 0
+        value = "./#{value}"
+      end
+    end
+
     write value
 
     # If the value has newlines, we need to adjust line and column

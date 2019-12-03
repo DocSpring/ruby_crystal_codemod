@@ -13,4 +13,5 @@
 .rspec_status
 sample_code
 
+.byebug_history
 *.cr

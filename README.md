@@ -26,7 +26,7 @@ $ gem install ruby_crystal_codemod
 
 - [x] Rename all file extensions from `.rb` to `.cr`
 - [x] Replace single quoted strings with double quotes
-- [ ] `require_relative "foo"` -> `require "./foo"`
+- [x] `require_relative "foo"` -> `require "./foo"`
 - [ ] Translate methods / keywords / operators:
   - [ ] `include?` -> `includes?`
   - [ ] `key?` -> `has_key?`
@@ -34,7 +34,7 @@ $ gem install ruby_crystal_codemod
   - [ ] `collect` -> `map`
   - [ ] `respond_to?` -> `responds_to?`
   - [ ] `length`, `count` -> `size`
-  - [ ] `__dir__` -> `__DIR__`
+  - [x] `__dir__` -> `__DIR__`
   - [ ] `and` -> `&&`
   - [ ] `or` -> `||`
   - [ ] `foo.each(&:method)` -> `foo.each(&.method)`
@@ -43,7 +43,7 @@ $ gem install ruby_crystal_codemod
 ## Testing
 
 So far I've just hacked together some example code in `./example_code/example.rb`.
-Run `./run_rufo` to process the Ruby files `./example_code` and generate Crystal files in the same directory.
+Run `./run_test` to process the Ruby files `./example_code` and generate Crystal files in the same directory. The script will also run an extremely basic test to make sure that Ruby and Crystal produce the same output.
 
 ## Contributing
 

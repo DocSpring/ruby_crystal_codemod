@@ -1,10 +1,10 @@
 #!/bin/bash
 set -eo pipefail
 
-./exe/rufo example_code
+./exe/rufo --simple-exit example_code
 
-RUBY_OUTPUT=$(ruby ./example_code/example.rb 2>&1)
-CRYSTAL_OUTPUT=$(crystal run ./example_code/example.cr 2>&1)
+RUBY_OUTPUT=$(ruby ./example_code/example.rb 2>&1 || true)
+CRYSTAL_OUTPUT=$(crystal run ./example_code/example.cr 2>&1 || true)
 
 if [ "$RUBY_OUTPUT" = "$CRYSTAL_OUTPUT" ]; then
   echo "Ruby stdout+stderr matches Crystal stdout+stderr!"

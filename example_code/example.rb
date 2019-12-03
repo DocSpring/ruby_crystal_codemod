@@ -1,4 +1,5 @@
 require_relative './subfolder/double'
+require_relative 'subfolder/triple'
 
 def fuel_for(mass)
   puts "Calculating fuel for mass: #{mass}"
@@ -10,3 +11,4 @@ end
 puts File.read(File.join(__dir__, 'input')).lines.sum { |mass| fuel_for(mass) }
 
 puts "2 x 2: #{double(2)}"
+puts "2 x 2 x 2: #{triple(2)}"
