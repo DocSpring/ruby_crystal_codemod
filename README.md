@@ -40,6 +40,11 @@ $ gem install ruby_crystal_codemod
   - [ ] `foo.each(&:method)` -> `foo.each(&.method)`
   - [ ] `foo.map &:method` -> `foo.map &.method`
 
+## Testing
+
+So far I've just hacked together some example code in `./example_code/example.rb`.
+Run `./run_rufo` to process the Ruby files `./example_code` and generate Crystal files in the same directory.
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/DocSpring/ruby_crystal_codemod.
