@@ -1,0 +1,21 @@
+#!/bin/bash
+./exe/rufo example_code
+
+RUBY_OUTPUT=$(ruby ./example_code/example.rb 2>&1)
+CRYSTAL_OUTPUT=$(crystal run ./example_code/example.cr 2>&1)
+
+if [ "$RUBY_OUTPUT" = "$CRYSTAL_OUTPUT" ]; then
+  echo "Ruby stdout+stderr matches Crystal stdout+stderr!"
+  echo "Output:"
+  echo "-------------------------------------"
+  echo "$CRYSTAL_OUTPUT"
+else
+  echo "Ruby output didn't match Crystal output!"
+  echo "Ruby:"
+  echo "-------------------------------------"
+  echo "$RUBY_OUTPUT"
+  echo
+  echo "Crystal:"
+  echo "-------------------------------------"
+  echo "$CRYSTAL_OUTPUT"
+fi
