@@ -14,4 +14,4 @@
 sample_code
 
 .byebug_history
-*.cr
+# *.cr
