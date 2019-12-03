@@ -1273,11 +1273,6 @@ class Rufo::Formatter
   end
 
   def visit_command_args(args, base_column)
-    if @wait_for_visit_command_args
-      @wait_for_visit_command_args = false
-      @wait_for_string
-    end
-
     needed_indent = @column
     args_is_def_class_or_module = false
     param_column = current_token_column
