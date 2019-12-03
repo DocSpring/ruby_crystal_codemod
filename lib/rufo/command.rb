@@ -54,10 +54,10 @@ class Rufo::Command
   rescue Rufo::SyntaxError
     logger.error("Error: the given text is not a valid ruby program (it has syntax errors)")
     CODE_ERROR
-  rescue => ex
+  rescue => e
     logger.error("You've found a bug!")
     logger.error("Please report it to https://github.com/ruby-formatter/rufo/issues with code that triggers it\n")
-    raise ex
+    raise e
   end
 
   def format_args(args)
@@ -103,24 +103,25 @@ class Rufo::Command
       return CODE_ERROR
     end
 
-    if code.force_encoding(result.encoding) != result
-      if @want_check
-        logger.warn("Formatting #{filename} produced changes")
-      else
-        File.write(filename, result)
-        logger.log("Format: #{filename}")
-      end
-
-      return CODE_CHANGE
+    # if code.force_encoding(result.encoding) != result
+    if @want_check
+      logger.warn("Formatting #{filename} produced changes")
+    else
+      crystal_filename = filename.sub(/\.rb$/, '.cr')
+      File.write(crystal_filename, result)
+      logger.log("Format: #{filename} => #{crystal_filename}")
     end
+
+    return CODE_CHANGE
+    # end
   rescue Rufo::SyntaxError
     logger.error("Error: the given text in #{filename} is not a valid ruby program (it has syntax errors)")
     CODE_ERROR
-  rescue => ex
+  rescue => e
     logger.error("You've found a bug!")
     logger.error("It happened while trying to format the file #{filename}")
     logger.error("Please report it to https://github.com/ruby-formatter/rufo/issues with code that triggers it\n")
-    raise ex
+    raise e
   end
 
   def format(code, dir)

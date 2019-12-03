@@ -24,7 +24,7 @@ $ gem install ruby_crystal_codemod
 
 ## Status
 
-- [ ] Rename all file extensions from `.rb` to `.cr`
+- [x] Rename all file extensions from `.rb` to `.cr`
 - [x] Replace single quoted strings with double quotes
 - [ ] `require_relative "foo"` -> `require "./foo"`
 - [ ] Translate methods / keywords / operators:
