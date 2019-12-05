@@ -10,12 +10,6 @@ The formatting rules have been modified in an attempt to produce some semi-valid
 
 > Ruby => Crystal Codemod / Rufo supports all Ruby versions >= 2.4.**5**, due to a bug in Ruby's Ripper parser.
 
-## Next Steps:
-
-* Once you've fixed all of the syntax and type errors, run `crystal tool format` to autoformat your code.
-* Run [Ameba](https://github.com/crystal-ameba/ameba) for static code analysis (similar to RuboCop), and fix all of the errors.
-  * *(Unfortunately Ameba doesn't have a --fix option yet.)*
-
 ## Installation
 
 Install the gem with:
@@ -23,6 +17,24 @@ Install the gem with:
 ```
 $ gem install ruby_crystal_codemod
 ```
+
+## Usage
+
+Go to the directory where you want to convert Ruby files into Crystal. Then run:
+
+```
+ruby_crystal_codemod .
+```
+
+This command will create new `*.cr` files and attempt to fix any simple errors. Then it will
+run `crystal tool format` to format the generated code.
+
+## Next Steps:
+
+* Once you've fixed all of the syntax and type errors, run `crystal tool format` to autoformat your code.
+* Run [Ameba](https://github.com/crystal-ameba/ameba) for static code analysis (similar to RuboCop), and fix all of the errors.
+  * *(Unfortunately Ameba doesn't have a --fix option yet.)*
+
 
 ## Status
 

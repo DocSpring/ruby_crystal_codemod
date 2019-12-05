@@ -1,4 +1,3 @@
-
 require "./subfolder/double"
 require "./subfolder/double"
 require "subfolder/double"
@@ -34,7 +33,7 @@ require_parent_file_works?
 arr = %w[apple orange pear pineapple]
 puts arr.includes?("apple") ? "got apple" : "don't got apple"
 
-hash = { foo: 123, bar: 345, baz: 456 }
+hash = {foo: 123, bar: 345, baz: 456}
 puts hash.has_key? :foo ? "got foo" : "don't got foo"
 
 has_pear = arr.find do |el|

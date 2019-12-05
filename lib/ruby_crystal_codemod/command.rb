@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "optparse"
+require 'open3'
 
 class RubyCrystalCodemod::Command
   CODE_OK = 0
@@ -110,6 +111,15 @@ class RubyCrystalCodemod::Command
       crystal_filename = filename.sub(/\.rb$/, ".cr")
       File.write(crystal_filename, result)
       logger.log("Format: #{filename} => #{crystal_filename}")
+    end
+
+    # Format the Crystal file with the Crystal code formatter
+    stdout, stderr, status = Open3.capture3("crystal", 'tool', 'format', crystal_filename)
+    unless status.success?
+      warn "'crystal tool format' failed with status: #{status.exitstatus}\n\n" \
+            "stdout: #{stdout}\n\n" \
+            "stderr: #{stderr}"
+      puts "(This probably means that you will have to fix some errors manually.)"
     end
 
     return CODE_CHANGE
