@@ -5,8 +5,8 @@ module Rufo
 
   class SyntaxError < StandardError; end
 
-  def self.format(code, **options)
-    Formatter.format(code, **options)
+  def self.format(code, filename, dir, **options)
+    Formatter.format(code, filename, dir, **options)
   end
 end
 

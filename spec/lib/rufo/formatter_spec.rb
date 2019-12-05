@@ -39,10 +39,10 @@ def assert_source_specs(source_specs)
     tests.concat([current_test]).each do |test|
       it "formats #{test[:name]} (line: #{test[:line]})" do
         pending if test[:pending]
-        formatted = described_class.format(test[:original], **test[:options])
+        formatted = described_class.format(test[:original], 'example_dir/example_file.rb', 'example_dir', **test[:options])
         expected = test[:expected].rstrip + "\n"
         expect(formatted).to eq(expected)
-        idempotency_check = described_class.format(formatted, **test[:options])
+        idempotency_check = described_class.format(formatted, 'example_dir/example_file.rb', 'example_dir', **test[:options])
         expect(idempotency_check).to eq(formatted)
       end
     end
@@ -55,12 +55,12 @@ def assert_format(code, expected = code, **options)
   line = caller_locations[0].lineno
 
   ex = it "formats #{code.inspect} (line: #{line})" do
-    actual = Rufo.format(code, **options)
+    actual = Rufo.format(code, 'example_dir/example_file.rb', 'example_dir', **options)
     if actual != expected
       fail "Expected\n\n~~~\n#{code}\n~~~\nto format to:\n\n~~~\n#{expected}\n~~~\n\nbut got:\n\n~~~\n#{actual}\n~~~\n\n  diff = #{expected.inspect}\n         #{actual.inspect}"
     end
 
-    second = Rufo.format(actual, **options)
+    second = Rufo.format(actual, 'example_dir/example_file.rb', 'example_dir', **options)
     if second != actual
       fail "Idempotency check failed. Expected\n\n~~~\n#{actual}\n~~~\nto format to:\n\n~~~\n#{actual}\n~~~\n\nbut got:\n\n~~~\n#{second}\n~~~\n\n  diff = #{second.inspect}\n         #{actual.inspect}"
     end

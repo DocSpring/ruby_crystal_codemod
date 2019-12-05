@@ -46,7 +46,7 @@ class Rufo::Command
   def format_stdin
     code = STDIN.read
 
-    result = format(code, @filename_for_dot_rufo || Dir.getwd)
+    result = format(code, nil, @filename_for_dot_rufo || Dir.getwd)
 
     print(result) if !@want_check
 
@@ -95,7 +95,7 @@ class Rufo::Command
     code = File.read(filename)
 
     begin
-      result = format(code, @filename_for_dot_rufo || File.dirname(filename))
+      result = format(code, filename, @filename_for_dot_rufo || File.dirname(filename))
     rescue Rufo::SyntaxError
       # We ignore syntax errors as these might be template files
       # with .rb extension
@@ -124,9 +124,9 @@ class Rufo::Command
     raise e
   end
 
-  def format(code, dir)
+  def format(code, filename, dir)
     @squiggly_warning = false
-    formatter = Rufo::Formatter.new(code)
+    formatter = Rufo::Formatter.new(code, filename, dir)
 
     options = @dot_file.get_config_in(dir)
     unless options.nil?

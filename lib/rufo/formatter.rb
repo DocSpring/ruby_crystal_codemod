@@ -2,22 +2,31 @@
 
 require "ripper"
 require 'byebug'
+require 'awesome_print'
 
 class Rufo::Formatter
   include Rufo::Settings
 
   INDENT_SIZE = 2
 
-  def self.format(code, **options)
-    formatter = new(code, **options)
+  def self.format(code, filename, dir, **options)
+    formatter = new(code, filename, dir, **options)
     formatter.format
     formatter.result
   end
 
-  def initialize(code, **options)
+  def initialize(code, filename, dir, **options)
+    @options = options
+    @filename = filename
+    @dir = dir
+
     @code = code
+    @code_lines = code.lines
     @tokens = Ripper.lex(code).reverse!
     @sexp = Ripper.sexp(code)
+
+    # ap @tokens
+    # ap @sexp
 
     unless @sexp
       raise ::Rufo::SyntaxError.new
@@ -1055,6 +1064,14 @@ class Rufo::Formatter
     #   [:arg_paren, [:args_add_block, [[:@int, "1", [1, 6]]], false]]]
     _, name, args = node
 
+    if name.is_a?(Array) && name[1].is_a?(Array)
+      ident = name[1][1]
+      case ident
+      when 'require', 'require_relative'
+        return if replace_require_statement(node, ident, args)
+      end
+    end
+
     @name_dot_column = nil
     visit name
 
@@ -1163,20 +1180,233 @@ class Rufo::Formatter
     consume_token :on_rparen
   end
 
+  # Parses any Ruby code, and attempts to evaluate it
+  #   require File.expand_path('./nested_require', File.dirname(__FILE__))
+  def parse_require_path_from_ruby_code(node, ident, next_level)
+    crystal_path = nil
+    (line_no, column_no), kind = current_token
+
+    # Need to figure out all of the Ruby code to execute, which may span across multiple lines.
+    # This heuristic probably won't work for all valid Ruby code, but it's a good start.
+    # (Also skips any initial parens)
+    paren_count = 0
+    require_tokens = []
+    @tokens.reverse_each.with_index do |token, i|
+      next if i == 0
+      _, name = token
+      case name
+      when :on_nl, :on_semicolon
+        break if paren_count == 0
+        next if paren_count == 1
+      when :on_lparen
+        paren_count += 1
+        next if paren_count == 1
+      when :on_rparen
+        paren_count -= 1
+        next if paren_count == 0
+      end
+
+      require_tokens << token[2]
+    end
+
+    require_string = require_tokens.join('').strip
+
+    show_error_divider("\n")
+    puts "WARNING: require statements can only use strings in Crystal. Error at line #{line_no}:#{column_no}:"
+    puts
+    puts "#{require_string}"
+    puts
+    show_requiring_files_docs
+
+    puts "\n==> Attempting to expand and evaluate the Ruby require path..."
+
+
+    # Expand __dir__ and __FILE__ into absolute paths
+    current_dir = Dir.getwd
+    expanded_require_string = require_string
+      .gsub('__dir__', "\"#{current_dir}/#{@dir}\"")
+      .gsub('__FILE__', "\"#{current_dir}/#{@filename}\"")
+
+    puts "====> Expanded __dir__ and __FILE__: #{expanded_require_string}"
+
+    evaluated_path = nil
+    begin
+      puts "====> Evaluating Ruby code: #{expanded_require_string}"
+      evaluated_path = eval(expanded_require_string)
+    rescue Exception => ex
+      puts "ERROR: We tried to evaluate and expand the path, but it crashed with an error:"
+      puts ex
+    end
+
+    if evaluated_path == nil || evaluated_path == ""
+      puts "ERROR: We tried to evaluate and expand the path, but it didn't return anything."
+    else
+      if !evaluated_path.match?(/\.rb$/)
+        evaluated_path = "#{evaluated_path}.rb"
+      end
+      puts "====> Evaluated Ruby path: #{evaluated_path}"
+
+      if File.exist?(evaluated_path)
+        crystal_path = evaluated_path.sub("#{Dir.getwd}/", '').sub(/\.rb$/, '')
+        puts "======> Successfully expanded the require path and found the file: #{evaluated_path}"
+        puts "======> Crystal require: #{crystal_path}"
+      else
+        puts "======> ERROR: Could not find #{evaluated_path}! Please fix this require statement manually."
+      end
+    end
+
+    if crystal_path.nil? || crystal_path == ''
+      puts "ERROR: Couldn't parse and evaluate the Ruby require statement! Please update the require statement manually."
+      return nil
+    end
+    show_error_divider('', "\n")
+
+    crystal_path
+  end
+
+  # Parses:
+  #   require "test"
+  #   require_relative "test"
+  #   require_relative("test")
+  #   require("test")
+  def parse_simple_require_path(node, ident, next_level)
+    return unless next_level.is_a?(Array)
+
+    if next_level[0] == :arg_paren
+      return unless (next_level = next_level[1]) && next_level.is_a?(Array)
+    end
+    return unless next_level[0] == :args_add_block && (next_level = next_level[1]) && next_level.is_a?(Array)
+    return unless (next_level = next_level[0]) && next_level.is_a?(Array)
+    return unless next_level[0] == :string_literal && (next_level = next_level[1]) && next_level.is_a?(Array)
+    return unless next_level[0] == :string_content && (next_level = next_level[1]) && next_level.is_a?(Array)
+    return unless next_level[0] == :@tstring_content && (next_level = next_level[1]) && next_level.is_a?(String)
+    next_level
+  end
+
+  def require_path_from_args(node, ident, args)
+    simple_path = parse_simple_require_path(node, ident, args)
+
+    if simple_path
+      # We now know that this was a simple string arg (either in parens, or after a space)
+      # So now we need to see if it's a single or double quoted string.
+      quote_char = nil
+      @tokens.reverse_each.with_index do |token, i|
+        (line_no, column_no), kind = token
+        case kind
+        when :on_tstring_beg
+          quote_char = token[2]
+        when :on_nl
+          break
+        end
+      end
+      unless quote_char
+        byebug
+        raise "Couldn't figure out the quote type for this string!"
+      end
+
+      # Now fix the quote escaping
+      if quote_char == "'"
+        simple_path = simple_path.gsub('"', "\\\"").gsub("\\'", "'")
+      end
+      return simple_path
+    end
+
+    parse_require_path_from_ruby_code(node, ident, args)
+  end
+
+  def show_requiring_files_docs
+    puts "===> Read the 'Requiring files' page in the Crystal docs:"
+    puts "===> https://crystal-lang.org/reference/syntax_and_semantics/requiring_files.html"
+  end
+
+  def show_error_divider(prefix = '', suffix = '')
+    puts "#{prefix}-------------------------------------------------------------------------------\n#{suffix}"
+  end
+
+  def replace_require_statement(node, ident, args)
+    # Rufo doesn't replace single quotes with double quotes for require statements, so
+    # we have to fix that manually here. (The double quote replacement seems to work everywhere else.)
+    require_path = require_path_from_args(node, ident, args)
+
+    unless require_path
+      show_error_divider("\n")
+      (line_no, column_no), kind = current_token
+      puts "ERROR: Couldn't find a valid path argument for require! Error at line #{line_no}:#{column_no}:"
+      puts
+      puts @code_lines[line_no - 1]
+      puts
+      show_requiring_files_docs
+      show_error_divider('', "\n")
+      return false
+    end
+
+    if ident == "require_relative" && !require_path.match?(/^..\//) && !require_path.match?(/^.\//)
+      require_path = "./#{require_path}"
+    end
+
+    crystal_path = require_path
+
+    # Rewrite all the tokens on this line with the Crystal require statement.
+    # byebug
+
+    # Remove all of the tokens
+    paren_count = 0
+    while true
+      token = @tokens.last
+      raise "[Infinite loop bug] Ran out of tokens!" unless token
+      _, name = token
+      case name
+      when :on_nl, :on_semicolon
+        if paren_count == 0
+          @tokens.pop
+          break
+        end
+      when :on_lparen
+        paren_count += 1
+      when :on_rparen
+        paren_count -= 1
+      end
+      @tokens.pop
+    end
+
+    @tokens += [
+      [[0,0], :on_nl, "\n", nil],
+      [[0,0], :on_tstring_end, '"', nil],
+      [[0,0], :on_tstring_content, crystal_path, nil],
+      [[0,0], :on_tstring_beg, '"', nil],
+      [[0,0], :on_sp, ' ', nil],
+      [[0,0], :on_ident, 'require', nil],
+    ]
+
+    node = [:command, [:@ident, "require", [0, 0]], [:args_add_block,
+      [[:string_literal,
+        [:string_content,
+          [:@tstring_content, crystal_path, [0, 0]]]]], false]]
+    _, name, args = node
+
+    base_column = current_token_column
+
+    push_call(node) do
+      visit name
+      consume_space_after_command_name
+    end
+    push_call(node) do
+      visit_command_args(args, base_column)
+    end
+    true
+  end
+
   def visit_command(node)
     # foo arg1, ..., argN
     #
     # [:command, name, args]
     _, name, args = node
 
-    if name && name[0] == :@ident && name[1] == "require_relative"
-      @tokens.last[2] = 'require'
-
-      require_path = args[1][0][1][1][1]
-      if !require_path.match?(/^.\//)
-        # TODO: Can't figure out how to modify the path in here.
-        # So just set a global variable and wait for the write call as a workaround.
-        @wait_for_consume_token_count_then_set_relative_path = 2
+    if name.is_a?(Array) && name[0] == :@ident
+      ident = name[1]
+      case ident
+      when "require", "require_relative"
+        return if replace_require_statement(node, ident, args)
       end
     end
 
@@ -3127,15 +3357,6 @@ class Rufo::Formatter
   end
 
   def consume_token_value(value)
-    # This is some pretty amazing code
-    if @wait_for_consume_token_count_then_set_relative_path &&
-        @wait_for_consume_token_count_then_set_relative_path > 0
-      @wait_for_consume_token_count_then_set_relative_path -= 1
-      if @wait_for_consume_token_count_then_set_relative_path == 0
-        value = "./#{value}"
-      end
-    end
-
     write value
 
     # If the value has newlines, we need to adjust line and column

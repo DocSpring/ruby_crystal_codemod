@@ -38,29 +38,30 @@ RSpec.describe Rufo::Command do
     end
 
     describe "files" do
-      describe "check" do
-        subject { -> { described_class.run(["-c", file]) } }
+      # NOTE - We disabled the check functionality, since it doesn't make sense for a transpiler / codemod
+      # describe "check" do
+      #   subject { -> { described_class.run(["-c", file]) } }
 
-        context "missing file" do
-          let(:file) { "missing.rb" }
-          it { is_expected.to terminate.with_code(1) }
-        end
+      #   context "missing file" do
+      #     let(:file) { "missing.rb" }
+      #     it { is_expected.to terminate.with_code(1) }
+      #   end
 
-        context "unchanged file" do
-          let(:file) { "spec/fixtures/valid" }
-          it { is_expected.to terminate }
-        end
+      #   context "unchanged file" do
+      #     let(:file) { "spec/fixtures/valid" }
+      #     it { is_expected.to terminate }
+      #   end
 
-        context "changed file" do
-          let(:file) { "spec/fixtures/needs_changes" }
-          it { is_expected.to terminate.with_code 3 }
-        end
+      #   context "changed file" do
+      #     let(:file) { "spec/fixtures/needs_changes" }
+      #     it { is_expected.to terminate.with_code 3 }
+      #   end
 
-        context "invalid file" do
-          let(:file) { "spec/fixtures/syntax_error" }
-          it { is_expected.to terminate.with_code 1 }
-        end
-      end
+      #   context "invalid file" do
+      #     let(:file) { "spec/fixtures/syntax_error" }
+      #     it { is_expected.to terminate.with_code 1 }
+      #   end
+      # end
 
       describe "format" do
         subject do
