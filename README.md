@@ -57,6 +57,10 @@ run `crystal tool format` to format the generated code.
   - [x] `foo.map &:method` -> `foo.map &.method`
 - [ ] private / protected methods
 - [ ] 'class << self' => def self. (?)
+- [ ] attr_accessor => property
+- [ ] attr_reader => getter
+- [ ] attr_writer => setter
+- [ ] YAML.load_file("./foo.yml") => YAML.parse(File.read("./foo.yml"))
 - [ ] Sorbet Type Annotations -> Crystal type annotations
 
 ## Testing
