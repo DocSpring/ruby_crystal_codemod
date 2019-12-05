@@ -2,7 +2,7 @@
 
 # Ruby => Crystal Codemod
 
-This project is a fork of [Rufo](https://github.com/ruby-formatter/rufo).
+This project is a fork of [Rufo](https://github.com/ruby-formatter/rufo). (Rufo and Crystal were both created by [Ary Borenszweig](https://github.com/asterite)!)
 
 > Rufo is as an _opinionated_ ruby formatter, intended to be used via the command line as a text-editor plugin, to autoformat files on save or on demand.
 
