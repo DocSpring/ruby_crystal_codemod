@@ -31,15 +31,16 @@ $ gem install ruby_crystal_codemod
 - [x] `require_relative "foo"` -> `require "./foo"`
 - [x] $:, LOAD_PATH => Show error and link to docs about CRYSTAL_PATH (for compiler)
 - [ ] Translate methods / keywords / operators:
-  - [ ] `include?` -> `includes?`
-  - [ ] `key?` -> `has_key?`
-  - [ ] `detect` -> `find`
-  - [ ] `collect` -> `map`
-  - [ ] `respond_to?` -> `responds_to?`
-  - [ ] `length`, `count` -> `size`
+  - [x] `include?` -> `includes?`
+  - [x] `key?` -> `has_key?`
+  - [x] `detect` -> `find`
+  - [x] `collect` -> `map`
+  - [x] `respond_to?` -> `responds_to?`
+  - [x] `length`, `count` -> `size`
   - [x] `__dir__` -> `__DIR__`
-  - [ ] `and` -> `&&`
-  - [ ] `or` -> `||`
+  - [x] `and` -> `&&`
+  - [x] `or` -> `||`
+  - [x] `not` -> `!`
   - [ ] `foo.each(&:method)` -> `foo.each(&.method)`
   - [ ] `foo.map &:method` -> `foo.map &.method`
 - [ ] Sorbet Type Annotations -> Crystal type annotations

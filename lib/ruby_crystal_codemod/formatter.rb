@@ -28,7 +28,7 @@ class RubyCrystalCodemod::Formatter
     @sexp = Ripper.sexp(code)
 
     # ap @tokens
-    # ap @sexp
+    ap @sexp if ENV['SHOW_SEXP']
 
     unless @sexp
       raise ::RubyCrystalCodemod::SyntaxError.new
@@ -2155,6 +2155,11 @@ class RubyCrystalCodemod::Formatter
     # [:unary, :-@, [:vcall, [:@ident, "x", [1, 2]]]]
     _, op, exp = node
 
+    # Crystal doesn't support and/or/not
+    if current_token[2] == 'not'
+      current_token[2] = "!"
+    end
+
     consume_op_or_keyword
 
     first_space = space?
@@ -2167,8 +2172,9 @@ class RubyCrystalCodemod::Formatter
         write "("
         next_token
         skip_space_or_newline
-      elsif !has_paren && !consume_space
-        write_space
+      elsif !has_paren
+        skip_space_or_newline
+        # write_space
       end
 
       visit exp
@@ -2235,9 +2241,19 @@ class RubyCrystalCodemod::Formatter
   end
 
   def consume_op_or_keyword
+    # Crystal doesn't have and / or
+    # See: https://crystal-lang.org/reference/syntax_and_semantics/operators.html
+    value = current_token_value
+    case value
+    when "and"
+      value = "&&"
+    when "or"
+      value = "||"
+    end
+
     case current_token_kind
     when :on_op, :on_kw
-      write current_token_value
+      write value
       next_token
     else
       bug "Expected op or kw, not #{current_token_kind}"
@@ -3417,8 +3433,25 @@ class RubyCrystalCodemod::Formatter
     check kind
 
     value = current_token_value
-    if kind == :on_ident && value == "__dir__"
-      value = "__DIR__"
+    if kind == :on_ident
+      # Some of these might be brittle and change too much, but this shouldn't be an issue,
+      # because any mistakes will be caught by the Crystal type-checker.
+      case value
+      when "__dir__"
+        value = "__DIR__"
+      when "include?"
+        value = "includes?"
+      when "key?"
+        value = "has_key?"
+      when "detect"
+        value = "find"
+      when "collect"
+        value = "map"
+      when "respond_to?"
+        value = "responds_to?"
+      when "length", "count"
+        value = "size"
+      end
     end
 
     consume_token_value(value)

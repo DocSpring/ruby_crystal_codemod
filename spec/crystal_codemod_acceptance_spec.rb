@@ -27,10 +27,12 @@ RSpec.describe "Crystal Codemod" do
             "stdout: #{stdout}\n\n" \
             "stderr: #{stderr}"
     end
-    expected_output_file = File.join(source_folder, "expected_output.txt")
-    # File.open(expected_ruby_output_file, 'w') { |f| f.puts stdout.strip }
-    expected_output = File.read(expected_output_file)
-    expect(stdout.strip).to eq expected_output.strip
+    ruby_output = stdout.strip
+
+    # expected_output_file = File.join(source_folder, "expected_output.txt")
+    # # File.open(expected_ruby_output_file, 'w') { |f| f.puts stdout.strip }
+    # expected_output = File.read(expected_output_file)
+    # expect(ruby_output).to eq expected_output.strip
 
     default_crystal_path = `crystal env CRYSTAL_PATH`.chomp
     crystal_path = "#{default_crystal_path}:#{source_folder}"
@@ -43,6 +45,8 @@ RSpec.describe "Crystal Codemod" do
             "stdout: #{stdout}\n\n" \
             "stderr: #{stderr}"
     end
-    expect(stdout.strip).to eq expected_output.strip
+    crystal_output = stdout.strip
+
+    expect(crystal_output).to eq ruby_output
   end
 end

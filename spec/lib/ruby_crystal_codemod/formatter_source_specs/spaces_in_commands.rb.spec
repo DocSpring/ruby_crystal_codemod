@@ -20,7 +20,7 @@ not x
 
 #~# EXPECTED
 
-not x
+!x
 
 #~# ORIGINAL
 
@@ -28,7 +28,7 @@ not  x
 
 #~# EXPECTED
 
-not x
+!x
 
 #~# ORIGINAL
 
