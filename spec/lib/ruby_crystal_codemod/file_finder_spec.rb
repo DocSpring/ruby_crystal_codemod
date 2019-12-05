@@ -39,7 +39,7 @@ RSpec.describe RubyCrystalCodemod::FileFinder do
     let(:file_or_dir) { finder_fixture_path("only_gemfiles") }
 
     it "includes the files" do
-      expect(relative_paths(subject.to_a)).to match_array([[true, "Gemfile"], [true, "a.gemspec"]])
+      expect(relative_paths(subject.to_a)).to match_array([])
     end
   end
 
@@ -47,7 +47,7 @@ RSpec.describe RubyCrystalCodemod::FileFinder do
     let(:file_or_dir) { finder_fixture_path("only_rake_files") }
 
     it "includes all the rake files" do
-      expect(relative_paths(subject.to_a)).to match_array([[true, "Rakefile"], [true, "a.rake"]])
+      expect(relative_paths(subject.to_a)).to match_array([])
     end
   end
 

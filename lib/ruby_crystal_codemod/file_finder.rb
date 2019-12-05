@@ -4,23 +4,23 @@ class RubyCrystalCodemod::FileFinder
   include Enumerable
 
   # Taken from https://github.com/ruby/rake/blob/f0a897e3fb557f64f5da59785b1a4464826f77b2/lib/rake/application.rb#L41
-  RAKEFILES = [
-    "rakefile",
-    "Rakefile",
-    "rakefile.rb",
-    "Rakefile.rb",
-  ]
+  # RAKEFILES = [
+  #   "rakefile",
+  #   "Rakefile",
+  #   "rakefile.rb",
+  #   "Rakefile.rb",
+  # ]
 
-  FILENAMES = [
-    "Gemfile",
-    *RAKEFILES,
-  ]
+  # FILENAMES = [
+  #   "Gemfile",
+  #   *RAKEFILES,
+  # ]
 
   EXTENSIONS = [
     ".rb",
-    ".gemspec",
-    ".rake",
-    ".jbuilder",
+  # ".gemspec",
+  # ".rake",
+  # ".jbuilder",
   ]
 
   EXCLUDED_DIRS = [
@@ -52,7 +52,7 @@ class RubyCrystalCodemod::FileFinder
       if File.directory?(path)
         Find.prune if EXCLUDED_DIRS.include?(basename)
       else
-        if EXTENSIONS.include?(File.extname(basename)) || FILENAMES.include?(basename)
+        if EXTENSIONS.include?(File.extname(basename)) #|| FILENAMES.include?(basename)
           files << path
         end
       end
