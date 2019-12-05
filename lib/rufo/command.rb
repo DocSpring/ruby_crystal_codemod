@@ -107,7 +107,7 @@ class Rufo::Command
     if @want_check
       logger.warn("Formatting #{filename} produced changes")
     else
-      crystal_filename = filename.sub(/\.rb$/, '.cr')
+      crystal_filename = filename.sub(/\.rb$/, ".cr")
       File.write(crystal_filename, result)
       logger.log("Format: #{filename} => #{crystal_filename}")
     end

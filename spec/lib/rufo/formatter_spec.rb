@@ -37,7 +37,7 @@ def assert_source_specs(source_spec_path)
         when current_test[:errors]
           # Remove any quotes around the string (just to fix syntax highlighting in VS Code)
           if line.strip != ""
-            current_test[:errors] << line.strip.gsub(/^["']|["']$/, '')
+            current_test[:errors] << line.strip.gsub(/^["']|["']$/, "")
           end
         when current_test[:expected]
           current_test[:expected] += line
@@ -56,7 +56,7 @@ def assert_source_specs(source_spec_path)
         options = test[:options] || {}
         options[:store_logs] = true
 
-        formatter = described_class.new(test[:original], 'example_dir/example_file.rb', 'example_dir', **options)
+        formatter = described_class.new(test[:original], "example_dir/example_file.rb", "example_dir", **options)
         expect(formatter.logs).to eq []
         formatter.format
         formatted = formatter.result
@@ -70,7 +70,7 @@ def assert_source_specs(source_spec_path)
           end
         end
 
-        idempotency_check = described_class.format(formatted, 'example_dir/example_file.rb', 'example_dir', **options)
+        idempotency_check = described_class.format(formatted, "example_dir/example_file.rb", "example_dir", **options)
         expect(idempotency_check).to eq(formatted)
       end
     end
@@ -83,12 +83,12 @@ def assert_format(code, expected = code, **options)
   line = caller_locations[0].lineno
 
   ex = it "formats #{code.inspect} (line: #{line})" do
-    actual = Rufo.format(code, 'example_dir/example_file.rb', 'example_dir', **options)
+    actual = Rufo.format(code, "example_dir/example_file.rb", "example_dir", **options)
     if actual != expected
       fail "Expected\n\n~~~\n#{code}\n~~~\nto format to:\n\n~~~\n#{expected}\n~~~\n\nbut got:\n\n~~~\n#{actual}\n~~~\n\n  diff = #{expected.inspect}\n         #{actual.inspect}"
     end
 
-    second = Rufo.format(actual, 'example_dir/example_file.rb', 'example_dir', **options)
+    second = Rufo.format(actual, "example_dir/example_file.rb", "example_dir", **options)
     if second != actual
       fail "Idempotency check failed. Expected\n\n~~~\n#{actual}\n~~~\nto format to:\n\n~~~\n#{actual}\n~~~\n\nbut got:\n\n~~~\n#{second}\n~~~\n\n  diff = #{second.inspect}\n         #{actual.inspect}"
     end

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 require "ripper"
-require 'byebug'
-require 'awesome_print'
+require "byebug"
+require "awesome_print"
 
 class Rufo::Formatter
   include Rufo::Settings
@@ -1080,7 +1080,7 @@ class Rufo::Formatter
     if name.is_a?(Array) && name[1].is_a?(Array)
       ident = name[1][1]
       case ident
-      when 'require', 'require_relative'
+      when "require", "require_relative"
         return if replace_require_statement(node, ident, args)
       end
     end
@@ -1222,7 +1222,7 @@ class Rufo::Formatter
       require_tokens << token[2]
     end
 
-    require_string = require_tokens.join('').strip
+    require_string = require_tokens.join("").strip
 
     show_error_divider("\n")
     log "WARNING: require statements can only use strings in Crystal. Error at line #{line_no}:#{column_no}:"
@@ -1237,8 +1237,8 @@ class Rufo::Formatter
     expanded_dir = File.expand_path(@dir)
     expanded_file = File.expand_path(@filename)
     expanded_require_string = require_string
-      .gsub('__dir__', "\"#{expanded_dir}\"")
-      .gsub('__FILE__', "\"#{expanded_file}\"")
+      .gsub("__dir__", "\"#{expanded_dir}\"")
+      .gsub("__FILE__", "\"#{expanded_file}\"")
 
     log "====> Expanded __dir__ and __FILE__: #{expanded_require_string}"
 
@@ -1262,7 +1262,7 @@ class Rufo::Formatter
       log "====> Evaluated Ruby path: #{evaluated_path}"
 
       if File.exist?(evaluated_path)
-        crystal_path = evaluated_path.sub("#{Dir.getwd}/", '').sub(/\.rb$/, '')
+        crystal_path = evaluated_path.sub("#{Dir.getwd}/", "").sub(/\.rb$/, "")
         log "======> Successfully expanded the require path and found the file: #{evaluated_path}"
         log "======> Crystal require: #{crystal_path}"
       else
@@ -1270,11 +1270,11 @@ class Rufo::Formatter
       end
     end
 
-    if crystal_path.nil? || crystal_path == ''
+    if crystal_path.nil? || crystal_path == ""
       log "ERROR: Couldn't parse and evaluate the Ruby require statement! Please update the require statement manually."
       return nil
     end
-    show_error_divider('', "\n")
+    show_error_divider("", "\n")
 
     crystal_path
   end
@@ -1333,7 +1333,7 @@ class Rufo::Formatter
     log "===> https://crystal-lang.org/reference/syntax_and_semantics/requiring_files.html"
   end
 
-  def show_error_divider(prefix = '', suffix = '')
+  def show_error_divider(prefix = "", suffix = "")
     log "#{prefix}-------------------------------------------------------------------------------\n#{suffix}"
   end
 
@@ -1371,7 +1371,7 @@ class Rufo::Formatter
       log @code_lines[line_no - 1]
       log
       show_requiring_files_docs
-      show_error_divider('', "\n")
+      show_error_divider("", "\n")
       return false
     end
 
@@ -1385,18 +1385,18 @@ class Rufo::Formatter
     remove_current_command_from_tokens
 
     @tokens += [
-      [[0,0], :on_nl, "\n", nil],
-      [[0,0], :on_tstring_end, '"', nil],
-      [[0,0], :on_tstring_content, crystal_path, nil],
-      [[0,0], :on_tstring_beg, '"', nil],
-      [[0,0], :on_sp, ' ', nil],
-      [[0,0], :on_ident, 'require', nil],
+      [[0, 0], :on_nl, "\n", nil],
+      [[0, 0], :on_tstring_end, '"', nil],
+      [[0, 0], :on_tstring_content, crystal_path, nil],
+      [[0, 0], :on_tstring_beg, '"', nil],
+      [[0, 0], :on_sp, " ", nil],
+      [[0, 0], :on_ident, "require", nil],
     ]
 
     node = [:command, [:@ident, "require", [0, 0]], [:args_add_block,
-      [[:string_literal,
-        [:string_content,
-          [:@tstring_content, crystal_path, [0, 0]]]]], false]]
+                                                     [[:string_literal,
+                                                       [:string_content,
+                                                        [:@tstring_content, crystal_path, [0, 0]]]]], false]]
     _, name, args = node
 
     base_column = current_token_column
@@ -1475,7 +1475,6 @@ class Rufo::Formatter
     #   [:args_add_block, [[:@int, "1", [1, 8]]], block]]
     _, receiver, _, name, args = node
 
-
     # Check for $: var and LOAD_PATH, which are unsupported in Crystal
     if receiver[0] == :var_ref && receiver[1][0] == :@gvar
       # byebug
@@ -1491,7 +1490,7 @@ class Rufo::Formatter
         log "Removing this line from the Crystal code."
         log "You might be able to replace this with CRYSTAL_PATH if needed."
         log "See: https://github.com/crystal-lang/crystal/wiki/Compiler-internals#the-compiler-class"
-        show_error_divider('', "\n")
+        show_error_divider("", "\n")
 
         remove_current_command_from_tokens
         return
@@ -1505,7 +1504,6 @@ class Rufo::Formatter
     #     return if replace_require_statement(node, ident, args)
     #   end
     # end
-
 
     base_column = current_token_column
 
@@ -3395,7 +3393,7 @@ class Rufo::Formatter
     check kind
 
     value = current_token_value
-    if kind == :on_ident && value == '__dir__'
+    if kind == :on_ident && value == "__dir__"
       value = "__DIR__"
     end
 

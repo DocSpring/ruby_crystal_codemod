@@ -47,12 +47,7 @@
     - run:
         name: Run Rufo
         command: |
-          bundle exec rake rufo:run
-
-    - run:
-        name: Verify rufo works against sample codebases
-        command: |
-          bin/verify-sample-code
+          bundle exec rufo -c lib/ spec/lib/
 
     # Store bundle cache
     - save_cache:

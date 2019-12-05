@@ -1,4 +1,4 @@
-# https://github.com/crystal-lang/crystal/wiki/Crystal-for-Rubyists#pseudo-constants
+# See: https://github.com/crystal-lang/crystal/wiki/Crystal-for-Rubyists#pseudo-constants
 
 #~# ORIGINAL __dir__
 
