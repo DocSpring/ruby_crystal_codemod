@@ -15,6 +15,8 @@
     - run:
         name: Install Crystal
         command: >-
+          sudo apt-get update &&
+          sudo apt-get install apt-transport-https ca-certificates &&
           curl -sSL https://dist.crystal-lang.org/apt/setup.sh | sudo bash &&
           curl -sL "https://keybase.io/crystal/pgp_keys.asc" | sudo apt-key add - &&
           echo "deb https://dist.crystal-lang.org/apt crystal main" | sudo tee /etc/apt/sources.list.d/crystal.list &&
