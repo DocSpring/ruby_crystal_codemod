@@ -1,5 +1,5 @@
 require "bundler/setup"
-require "rufo"
+require "ruby_crystal_codemod"
 require "pp"
 require "byebug"
 

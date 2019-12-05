@@ -1,8 +1,8 @@
 require "spec_helper"
 
-RSpec.describe Rufo::Settings do
+RSpec.describe RubyCrystalCodemod::Settings do
   class TestClass
-    include Rufo::Settings
+    include RubyCrystalCodemod::Settings
   end
 
   subject { TestClass.new }

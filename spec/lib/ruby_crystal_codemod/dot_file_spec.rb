@@ -1,6 +1,6 @@
 require "spec_helper"
 
-RSpec.describe Rufo::DotFile do
+RSpec.describe RubyCrystalCodemod::DotFile do
   describe "#parse" do
     it "parses booleans" do
       expect(subject.parse("key true\nother false")).to eql(

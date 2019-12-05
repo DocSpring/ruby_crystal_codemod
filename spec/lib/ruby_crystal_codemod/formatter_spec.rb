@@ -83,23 +83,23 @@ def assert_format(code, expected = code, **options)
   line = caller_locations[0].lineno
 
   ex = it "formats #{code.inspect} (line: #{line})" do
-    actual = Rufo.format(code, "example_dir/example_file.rb", "example_dir", **options)
+    actual = RubyCrystalCodemod.format(code, "example_dir/example_file.rb", "example_dir", **options)
     if actual != expected
       fail "Expected\n\n~~~\n#{code}\n~~~\nto format to:\n\n~~~\n#{expected}\n~~~\n\nbut got:\n\n~~~\n#{actual}\n~~~\n\n  diff = #{expected.inspect}\n         #{actual.inspect}"
     end
 
-    second = Rufo.format(actual, "example_dir/example_file.rb", "example_dir", **options)
+    second = RubyCrystalCodemod.format(actual, "example_dir/example_file.rb", "example_dir", **options)
     if second != actual
       fail "Idempotency check failed. Expected\n\n~~~\n#{actual}\n~~~\nto format to:\n\n~~~\n#{actual}\n~~~\n\nbut got:\n\n~~~\n#{second}\n~~~\n\n  diff = #{second.inspect}\n         #{actual.inspect}"
     end
   end
 
-  # This is so we can do `rspec spec/rufo_spec.rb:26` and
+  # This is so we can do `rspec spec/ruby_crystal_codemod_spec.rb:26` and
   # refer to line numbers for assert_format
   ex.metadata[:line_number] = line
 end
 
-RSpec.describe Rufo::Formatter do
+RSpec.describe RubyCrystalCodemod::Formatter do
   source_specs = Dir[File.join(FILE_PATH, "/formatter_source_specs/*")]
   source_specs += Dir[File.join(FILE_PATH, "/formatter_crystal_specs/*")]
 

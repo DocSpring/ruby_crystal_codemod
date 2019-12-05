@@ -1,4 +1,4 @@
-module Rufo
+module RubyCrystalCodemod
   class Logger
     LEVELS = {
       silent: 0,

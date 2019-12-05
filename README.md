@@ -46,9 +46,9 @@ $ gem install ruby_crystal_codemod
 
 Run `rspec` to run all the specs and integration tests. I've kept all of the original rufo specs, because they're all really fast, it doesn't hurt to produce nicely formatted Crystal code (before the crystal format pass.)
 
-Crystal-specific formatting specs can be found in `spec/lib/rufo/formatter_crystal_specs/*`.
+Crystal-specific formatting specs can be found in `spec/lib/ruby_crystal_codemod/formatter_crystal_specs/*`.
 
-There's also a Crystal acceptance spec at `spec/lib/rufo/crystal_codemod_acceptance_spec.rb`.
+There's also a Crystal acceptance spec at `spec/lib/ruby_crystal_codemod/crystal_codemod_acceptance_spec.rb`.
 This transpiles the example Ruby code in `spec/fixtures/crystal_codemod_test`, and makes sure that Ruby
 and Crystal produce the same output when they both run the respective code.
 

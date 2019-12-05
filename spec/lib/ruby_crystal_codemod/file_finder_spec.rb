@@ -1,6 +1,6 @@
 require "spec_helper"
 
-RSpec.describe Rufo::FileFinder do
+RSpec.describe RubyCrystalCodemod::FileFinder do
   subject { described_class.new([file_or_dir]) }
 
   context "the directory contains .rb files" do

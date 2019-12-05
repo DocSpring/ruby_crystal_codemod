@@ -2,4 +2,4 @@
 set -eo pipefail
 
 # For testing things
-./exe/rufo --simple-exit test.rb && crystal run test.cr
+./exe/ruby_crystal_codemod --simple-exit test.rb && crystal run test.cr

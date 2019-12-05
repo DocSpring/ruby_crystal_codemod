@@ -13,9 +13,9 @@ RSpec.describe "Crystal Codemod" do
     crystal_entry = File.join(source_folder, "example.cr")
 
     Dir.chdir source_folder do
-      stdout, stderr, status = Open3.capture3("../../../exe/rufo", "--simple-exit", source_folder)
+      stdout, stderr, status = Open3.capture3("../../../exe/ruby_crystal_codemod", "--simple-exit", source_folder)
       unless status.success?
-        raise "Rufo formatting failed with status: #{status.exitstatus}\n\n" \
+        raise "ruby_crystal_codemod failed with status: #{status.exitstatus}\n\n" \
               "stdout: #{stdout}\n\n" \
               "stderr: #{stderr}"
       end

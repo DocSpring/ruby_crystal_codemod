@@ -5,7 +5,7 @@
 2. Add missing release notes to `CHANGELOG.md`
 
 3. Bump version in
-  * `lib/rufo/version.rb`
+  * `lib/ruby_crystal_codemod/version.rb`
   * `CHANGELOG.md`
 
 4. Commit version bump via

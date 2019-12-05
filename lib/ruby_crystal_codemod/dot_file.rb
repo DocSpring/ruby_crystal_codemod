@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-class Rufo::DotFile
+class RubyCrystalCodemod::DotFile
   def initialize
     @cache = {}
   end
 
   def get_config_in(dir)
-    dot_rufo = find_in(dir)
-    if dot_rufo
-      return parse(dot_rufo)
+    dot_ruby_crystal_codemod = find_in(dir)
+    if dot_ruby_crystal_codemod
+      return parse(dot_ruby_crystal_codemod)
     end
   end
 
@@ -39,7 +39,7 @@ class Rufo::DotFile
 
   def internal_find_in(dir)
     dir = File.expand_path(dir)
-    file = File.join(dir, ".rufo")
+    file = File.join(dir, ".ruby_crystal_codemod")
     if File.exist?(file)
       return File.read(file)
     end

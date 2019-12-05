@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-module Rufo
+module RubyCrystalCodemod
   VERSION = "0.7.0"
 end

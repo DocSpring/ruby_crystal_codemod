@@ -7,7 +7,7 @@
 #   def rufo_command(*switches, rake_args)
 #     files_or_dirs = rake_args[:files_or_dirs] || "."
 #     args = switches + files_or_dirs.split(" ")
-#     Rufo::Command.run(args)
+#     RubyCrystalCodemod::Command.run(args)
 #   end
 
 #   desc "Format Ruby code in current directory"

@@ -1,7 +1,7 @@
 require "spec_helper"
 require "tempfile"
 
-RSpec.describe Rufo::Command do
+RSpec.describe RubyCrystalCodemod::Command do
   describe "exit codes" do
     matcher :terminate do
       actual = nil
@@ -66,7 +66,7 @@ RSpec.describe Rufo::Command do
       describe "format" do
         subject do
           lambda do
-            tempfile = File.exist?(file) && Tempfile.new("rufo-fixture")
+            tempfile = File.exist?(file) && Tempfile.new("ruby_crystal_codemod-fixture")
 
             if tempfile
               begin

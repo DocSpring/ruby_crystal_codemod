@@ -1,6 +1,6 @@
 require "spec_helper"
 
-RSpec.describe Rufo::Logger do
+RSpec.describe RubyCrystalCodemod::Logger do
   subject { described_class.new(level) }
 
   let(:level) { :debug }

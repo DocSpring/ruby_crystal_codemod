@@ -1,6 +1,6 @@
 require "find"
 
-class Rufo::FileFinder
+class RubyCrystalCodemod::FileFinder
   include Enumerable
 
   # Taken from https://github.com/ruby/rake/blob/f0a897e3fb557f64f5da59785b1a4464826f77b2/lib/rake/application.rb#L41

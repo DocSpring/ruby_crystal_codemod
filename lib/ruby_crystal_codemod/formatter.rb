@@ -4,8 +4,8 @@ require "ripper"
 require "byebug"
 require "awesome_print"
 
-class Rufo::Formatter
-  include Rufo::Settings
+class RubyCrystalCodemod::Formatter
+  include RubyCrystalCodemod::Settings
 
   attr_accessor :logs
 
@@ -31,7 +31,7 @@ class Rufo::Formatter
     # ap @sexp
 
     unless @sexp
-      raise ::Rufo::SyntaxError.new
+      raise ::RubyCrystalCodemod::SyntaxError.new
     end
 
     @indent = 0
@@ -1359,7 +1359,7 @@ class Rufo::Formatter
   end
 
   def replace_require_statement(node, ident, args)
-    # Rufo doesn't replace single quotes with double quotes for require statements, so
+    # RubyCrystalCodemod doesn't replace single quotes with double quotes for require statements, so
     # we have to fix that manually here. (The double quote replacement seems to work everywhere else.)
     require_path = require_path_from_args(node, ident, args)
 
@@ -3844,7 +3844,7 @@ class Rufo::Formatter
   end
 
   def bug(msg)
-    raise Rufo::Bug.new("#{msg} at #{current_token}")
+    raise RubyCrystalCodemod::Bug.new("#{msg} at #{current_token}")
   end
 
   # [[1, 0], :on_int, "1"]

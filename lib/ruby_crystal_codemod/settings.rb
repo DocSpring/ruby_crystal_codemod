@@ -1,4 +1,4 @@
-module Rufo::Settings
+module RubyCrystalCodemod::Settings
   OPTIONS = {
     parens_in_def: [:yes, :dynamic],
     align_case_when: [false, true],
