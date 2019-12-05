@@ -55,6 +55,7 @@ run `crystal tool format` to format the generated code.
   - [x] `not` -> `!`
   - [x] `foo.each(&:method)` -> `foo.each(&.method)`
   - [x] `foo.map &:method` -> `foo.map &.method`
+- [ ] private / protected methods
 - [ ] Sorbet Type Annotations -> Crystal type annotations
 
 ## Testing
