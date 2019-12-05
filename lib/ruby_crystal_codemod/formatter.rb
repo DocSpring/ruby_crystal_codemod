@@ -1200,8 +1200,7 @@ class RubyCrystalCodemod::Formatter
     (line_no, column_no), _kind = current_token
 
     # Need to figure out all of the Ruby code to execute, which may span across multiple lines.
-    # This heuristic probably won't work for all valid Ruby code, but it's a good start.
-    # (Also skips any initial parens)
+    # (This heuristic probably won't work for all valid Ruby code, but it's a good start.)
     paren_count = 0
     require_tokens = []
     @tokens.reverse_each.with_index do |token, i|
@@ -1213,10 +1212,8 @@ class RubyCrystalCodemod::Formatter
         next if paren_count == 1
       when :on_lparen
         paren_count += 1
-        next if paren_count == 1
       when :on_rparen
         paren_count -= 1
-        next if paren_count == 0
       end
 
       require_tokens << token[2]

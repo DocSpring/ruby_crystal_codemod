@@ -23,7 +23,13 @@ def assert_source_specs(source_spec_path)
           name = $~[1].strip
           name = "unnamed test" if name.empty?
 
-          current_test = { name: name, line: index + 1, options: {}, original: "" }
+          current_test = {
+            name: name,
+            line: index + 1,
+            options: {},
+            original: "",
+            source: source_spec_path
+          }
         when !current_test
           next
         when line =~ /^#~# EXPECTED$/
@@ -37,7 +43,7 @@ def assert_source_specs(source_spec_path)
         when current_test[:errors]
           # Remove any quotes around the string (just to fix syntax highlighting in VS Code)
           if line.strip != ""
-            current_test[:errors] << line.strip.gsub(/^["']|["']$/, "")
+            current_test[:errors] << line
           end
         when current_test[:expected]
           current_test[:expected] += line
@@ -56,7 +62,12 @@ def assert_source_specs(source_spec_path)
         options = test[:options] || {}
         options[:store_logs] = true
 
-        formatter = described_class.new(test[:original], "example_dir/example_file.rb", "example_dir", **options)
+        formatter = described_class.new(
+          test[:original],
+          test[:source],
+          File.dirname(test[:source]),
+          **options
+        )
         expect(formatter.logs).to eq []
         formatter.format
         formatted = formatter.result
@@ -66,7 +77,18 @@ def assert_source_specs(source_spec_path)
         if test[:errors]
           all_logs = formatter.logs.join("\n")
           test[:errors].each do |expected_error|
-            expect(all_logs).to include(expected_error)
+            if expected_error.match?(/^["']|["']$/)
+              error_string = expected_error.strip.gsub(/^["']|["']$/, "")
+            elsif expected_error.match?(/^\/.*\/$/)
+              error_regex = Regexp.new(expected_error.strip.gsub(/^\/|\/$/, ""), Regexp::MULTILINE)
+            else
+              error_string = expected_error.strip
+            end
+            if error_string
+              expect(all_logs).to include(error_string)
+            else
+              expect(all_logs).to match(error_regex)
+            end
           end
         end
 
