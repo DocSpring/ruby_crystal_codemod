@@ -30,7 +30,7 @@ $ gem install ruby_crystal_codemod
 - [x] Replace single quoted strings with double quotes
 - [x] `require_relative "foo"` -> `require "./foo"`
 - [x] $:, LOAD_PATH => Show error and link to docs about CRYSTAL_PATH (for compiler)
-- [ ] Translate methods / keywords / operators:
+- [x] Translate methods / keywords / operators:
   - [x] `include?` -> `includes?`
   - [x] `key?` -> `has_key?`
   - [x] `detect` -> `find`
@@ -41,8 +41,8 @@ $ gem install ruby_crystal_codemod
   - [x] `and` -> `&&`
   - [x] `or` -> `||`
   - [x] `not` -> `!`
-  - [ ] `foo.each(&:method)` -> `foo.each(&.method)`
-  - [ ] `foo.map &:method` -> `foo.map &.method`
+  - [x] `foo.each(&:method)` -> `foo.each(&.method)`
+  - [x] `foo.map &:method` -> `foo.map &.method`
 - [ ] Sorbet Type Annotations -> Crystal type annotations
 
 ## Testing

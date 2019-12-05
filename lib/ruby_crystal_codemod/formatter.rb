@@ -24,11 +24,12 @@ class RubyCrystalCodemod::Formatter
 
     @code = code
     @code_lines = code.lines
+    @prev_token = nil
     @tokens = Ripper.lex(code).reverse!
     @sexp = Ripper.sexp(code)
 
     # ap @tokens
-    ap @sexp if ENV['SHOW_SEXP']
+    ap @sexp if ENV["SHOW_SEXP"]
 
     unless @sexp
       raise ::RubyCrystalCodemod::SyntaxError.new
@@ -798,7 +799,15 @@ class RubyCrystalCodemod::Formatter
     # :foo
     #
     # [:symbol, [:@ident, "foo", [1, 1]]]
-    consume_token :on_symbeg
+
+    # Block arg calls changed from &: to &. in Crystal
+    if @prev_token && @prev_token[2] == "&"
+      current_token[1] = :on_period
+      current_token[2] = "."
+      consume_token :on_period
+    else
+      consume_token :on_symbeg
+    end
     visit_exps node[1..-1], with_lines: false
   end
 
@@ -1814,6 +1823,7 @@ class RubyCrystalCodemod::Formatter
         end
       end
 
+      # Block operator changed from &: to &. in Crystal
       consume_op "&"
       skip_space_or_newline
       visit block_arg
@@ -2156,7 +2166,7 @@ class RubyCrystalCodemod::Formatter
     _, op, exp = node
 
     # Crystal doesn't support and/or/not
-    if current_token[2] == 'not'
+    if current_token[2] == "not"
       current_token[2] = "!"
     end
 
@@ -3974,7 +3984,7 @@ class RubyCrystalCodemod::Formatter
   end
 
   def next_token
-    prev_token = self.current_token
+    @prev_token = self.current_token
 
     @tokens.pop
 
@@ -3983,7 +3993,7 @@ class RubyCrystalCodemod::Formatter
     end
 
     # First first token in newline if requested
-    if @want_first_token_in_line && prev_token && (prev_token[1] == :on_nl || prev_token[1] == :on_ignored_nl)
+    if @want_first_token_in_line && @prev_token && (@prev_token[1] == :on_nl || @prev_token[1] == :on_ignored_nl)
       @tokens.reverse_each do |token|
         case token[1]
         when :on_sp

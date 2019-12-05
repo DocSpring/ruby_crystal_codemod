@@ -70,5 +70,8 @@ arr.size > 2 && arr.size < 10 && puts "arr size is between 2 and 10"
 (arr.size < 2 || arr.size > 100_000) || puts "arr size is between 2 and 10"
 (arr.size > 2 || arr.size > 100_000) || puts "should not be called"
 
-# puts arr.each(&:upcase)
-# puts arr.map(&:downcase).join('|')
+puts arr.map(&.downcase).join("|")
+upcase = arr.map &.upcase
+puts upcase.join(" ")
+up_reverse = arr.map(&.upcase).map &.reverse
+puts up_reverse.to_s
