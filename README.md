@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/DocSpring/ruby_crystal_codemod.svg?style=svg)](https://circleci.com/gh/DocSpring/ruby_crystal_codemod)
+
 # Ruby => Crystal Codemod
 
 This project is a fork of [Rufo](https://github.com/ruby-formatter/rufo).
