@@ -69,7 +69,10 @@ and Crystal produce the same output when they both run the respective code.
 
 ## Developing
 
-Before submitting a PR, please run `bundle exec rake rubocop -a` and fix any errors.
+Before submitting a PR, please run:
+
+* `bundle exec rake rubocop -a`
+* `bundle exec rufo lib/ spec/lib/`
 
 ## Contributing
 
