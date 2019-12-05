@@ -1,6 +1,4 @@
-$:.unshift __DIR__
 
-require "../example_code/subfolder/double"
 require "./subfolder/double"
 require "./subfolder/double"
 require "subfolder/double"
@@ -9,7 +7,7 @@ require "subfolder/double"
 puts "helllooooooooooooo"
 require "subfolder/double"
 puts "hello"
-require "../example_code/subfolder/double"
+require "../crystal_codemod_test/subfolder/double"
 require "./subfolder/triple"
 require "./subfolder/triple"
 require "./subfolder/triple"

@@ -4,45 +4,73 @@ require "fileutils"
 VERSION = Gem::Version.new(RUBY_VERSION)
 FILE_PATH = Pathname.new(File.dirname(__FILE__))
 
-def assert_source_specs(source_specs)
-  relative_path = Pathname.new(source_specs).relative_path_from(FILE_PATH).to_s
+def assert_source_specs(source_spec_path)
+  relative_path = Pathname.new(source_spec_path).relative_path_from(FILE_PATH).to_s
 
   describe relative_path do
     tests = []
     current_test = nil
 
-    File.foreach(source_specs).with_index do |line, index|
-      case
-      when line =~ /^#~# ORIGINAL ?([\w\s]+)$/
-        # save old test
-        tests.push current_test if current_test
+    File.foreach(source_spec_path).with_index do |line, index|
+      begin
+        case
+        when line =~ /^#~# ORIGINAL ?([\w\s]+)$/
+          # save old test
+          tests.push current_test if current_test
 
-        # start a new test
+          # start a new test
 
-        name = $~[1].strip
-        name = "unnamed test" if name.empty?
+          name = $~[1].strip
+          name = "unnamed test" if name.empty?
 
-        current_test = { name: name, line: index + 1, options: {}, original: "" }
-      when line =~ /^#~# EXPECTED$/
-        current_test[:expected] = ""
-      when line =~ /^#~# PENDING$/
-        current_test[:pending] = true
-      when line =~ /^#~# (.+)$/
-        current_test[:options] = eval("{ #{$~[1]} }")
-      when current_test[:expected]
-        current_test[:expected] += line
-      when current_test[:original]
-        current_test[:original] += line
+          current_test = { name: name, line: index + 1, options: {}, original: "" }
+        when !current_test
+          next
+        when line =~ /^#~# EXPECTED$/
+          current_test[:expected] = ""
+        when line =~ /^#~# PENDING$/
+          current_test[:pending] = true
+        when line =~ /^#~# ERRORS$/
+          current_test[:errors] = []
+        when line =~ /^#~# (.+)$/
+          current_test[:options] = eval("{ #{$~[1]} }")
+        when current_test[:errors]
+          # Remove any quotes around the string (just to fix syntax highlighting in VS Code)
+          if line.strip != ""
+            current_test[:errors] << line.strip.gsub(/^["']|["']$/, '')
+          end
+        when current_test[:expected]
+          current_test[:expected] += line
+        when current_test[:original]
+          current_test[:original] += line
+        end
+      rescue StandardError => ex
+        puts "Error in #{source_spec_path}:"
+        raise ex
       end
     end
 
     tests.concat([current_test]).each do |test|
       it "formats #{test[:name]} (line: #{test[:line]})" do
         pending if test[:pending]
-        formatted = described_class.format(test[:original], 'example_dir/example_file.rb', 'example_dir', **test[:options])
+        options = test[:options] || {}
+        options[:store_logs] = true
+
+        formatter = described_class.new(test[:original], 'example_dir/example_file.rb', 'example_dir', **options)
+        expect(formatter.logs).to eq []
+        formatter.format
+        formatted = formatter.result
         expected = test[:expected].rstrip + "\n"
         expect(formatted).to eq(expected)
-        idempotency_check = described_class.format(formatted, 'example_dir/example_file.rb', 'example_dir', **test[:options])
+
+        if test[:errors]
+          all_logs = formatter.logs.join("\n")
+          test[:errors].each do |expected_error|
+            expect(all_logs).to include(expected_error)
+          end
+        end
+
+        idempotency_check = described_class.format(formatted, 'example_dir/example_file.rb', 'example_dir', **options)
         expect(idempotency_check).to eq(formatted)
       end
     end
@@ -72,8 +100,11 @@ def assert_format(code, expected = code, **options)
 end
 
 RSpec.describe Rufo::Formatter do
-  Dir[File.join(FILE_PATH, "/formatter_source_specs/*")].each do |source_specs|
-    assert_source_specs(source_specs) if File.file?(source_specs)
+  source_specs = Dir[File.join(FILE_PATH, "/formatter_source_specs/*")]
+  source_specs += Dir[File.join(FILE_PATH, "/formatter_crystal_specs/*")]
+
+  source_specs.each do |source_spec|
+    assert_source_specs(source_spec) if File.file?(source_spec)
   end
 
   if VERSION >= Gem::Version.new("2.6")

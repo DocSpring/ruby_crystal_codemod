@@ -10,7 +10,6 @@ require \
 require \
   File.expand_path('subfolder/triple', __dir__); puts 'hello'
 
-
 require(
   "test"
 ); puts 'hello'

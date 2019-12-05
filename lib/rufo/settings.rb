@@ -5,6 +5,7 @@ module Rufo::Settings
     align_chained_calls: [false, true],
     trailing_commas: [true, false],
     quote_style: [:double, :single],
+    store_logs: [false, true],
   }
 
   attr_accessor(*OPTIONS.keys)

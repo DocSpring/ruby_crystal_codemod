@@ -1,10 +1,10 @@
-require "example_code/subfolder/nested_require"
+require "subfolder/nested_require"
 
-require "example_code/subfolder/nested_require"
+require "subfolder/nested_require"
 
-require "example_code/example"
+require "example"
 
-require "example_code/subfolder/triple"
+require "subfolder/triple"
 puts "hello"
 
 require "test"

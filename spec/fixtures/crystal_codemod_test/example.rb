@@ -1,6 +1,5 @@
 $:.unshift __dir__
 
-require_relative '../example_code/subfolder/double'
 require_relative './subfolder/double'
 require_relative "./subfolder/double"
 require \
@@ -12,7 +11,7 @@ require(
   "subfolder/double"
 ); puts 'helllooooooooooooo'
 require 'subfolder/double'; puts 'hello'
-require_relative "../example_code/subfolder/double"
+require_relative "../crystal_codemod_test/subfolder/double"
 require_relative 'subfolder/triple'
 require_relative "subfolder/triple"
 require_relative \

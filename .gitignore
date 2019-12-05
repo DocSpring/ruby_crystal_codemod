@@ -15,3 +15,6 @@ sample_code
 
 .byebug_history
 # *.cr
+
+test.rb
+test.cr

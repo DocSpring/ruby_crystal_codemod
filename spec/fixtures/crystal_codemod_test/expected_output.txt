@@ -1,0 +1,27 @@
+helllooooooooooooo
+hello
+Calculating fuel for mass: 141255
+Calculating fuel for mass: 47083
+Calculating fuel for mass: 15692
+Calculating fuel for mass: 5228
+Calculating fuel for mass: 1740
+Calculating fuel for mass: 578
+Calculating fuel for mass: 190
+Calculating fuel for mass: 61
+Calculating fuel for mass: 18
+Calculating fuel for mass: 4
+Calculating fuel for mass: 93769
+Calculating fuel for mass: 31254
+Calculating fuel for mass: 10416
+Calculating fuel for mass: 3470
+Calculating fuel for mass: 1154
+Calculating fuel for mass: 382
+Calculating fuel for mass: 125
+Calculating fuel for mass: 39
+Calculating fuel for mass: 11
+Calculating fuel for mass: 1
+117446
+2 x 2: 4
+2 x 2 x 2: 6
+yeah it works
+yeah parent file works

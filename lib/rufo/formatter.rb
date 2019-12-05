@@ -7,6 +7,8 @@ require 'awesome_print'
 class Rufo::Formatter
   include Rufo::Settings
 
+  attr_accessor :logs
+
   INDENT_SIZE = 2
 
   def self.format(code, filename, dir, **options)
@@ -176,7 +178,18 @@ class Rufo::Formatter
     # can be added appropriately for heredocs for example.
     @literal_elements_level = nil
 
+    @store_logs = false
+    @logs = []
+
     init_settings(options)
+  end
+
+  def log(str = "")
+    if @store_logs
+      @logs << str
+      return
+    end
+    puts str
   end
 
   def format
@@ -1212,51 +1225,51 @@ class Rufo::Formatter
     require_string = require_tokens.join('').strip
 
     show_error_divider("\n")
-    puts "WARNING: require statements can only use strings in Crystal. Error at line #{line_no}:#{column_no}:"
-    puts
-    puts "#{require_string}"
-    puts
+    log "WARNING: require statements can only use strings in Crystal. Error at line #{line_no}:#{column_no}:"
+    log
+    log "#{require_string}"
+    log
     show_requiring_files_docs
 
-    puts "\n==> Attempting to expand and evaluate the Ruby require path..."
-
+    log "\n==> Attempting to expand and evaluate the Ruby require path..."
 
     # Expand __dir__ and __FILE__ into absolute paths
-    current_dir = Dir.getwd
+    expanded_dir = File.expand_path(@dir)
+    expanded_file = File.expand_path(@filename)
     expanded_require_string = require_string
-      .gsub('__dir__', "\"#{current_dir}/#{@dir}\"")
-      .gsub('__FILE__', "\"#{current_dir}/#{@filename}\"")
+      .gsub('__dir__', "\"#{expanded_dir}\"")
+      .gsub('__FILE__', "\"#{expanded_file}\"")
 
-    puts "====> Expanded __dir__ and __FILE__: #{expanded_require_string}"
+    log "====> Expanded __dir__ and __FILE__: #{expanded_require_string}"
 
     evaluated_path = nil
     begin
-      puts "====> Evaluating Ruby code: #{expanded_require_string}"
+      log "====> Evaluating Ruby code: #{expanded_require_string}"
       evaluated_path = eval(expanded_require_string)
     rescue Exception => ex
-      puts "ERROR: We tried to evaluate and expand the path, but it crashed with an error:"
-      puts ex
+      log "ERROR: We tried to evaluate and expand the path, but it crashed with an error:"
+      log ex
     end
 
     if evaluated_path == nil || evaluated_path == ""
-      puts "ERROR: We tried to evaluate and expand the path, but it didn't return anything."
+      log "ERROR: We tried to evaluate and expand the path, but it didn't return anything."
     else
-      if !evaluated_path.match?(/\.rb$/)
+      if !evaluated_path.to_s.match?(/\.rb$/)
         evaluated_path = "#{evaluated_path}.rb"
       end
-      puts "====> Evaluated Ruby path: #{evaluated_path}"
+      log "====> Evaluated Ruby path: #{evaluated_path}"
 
       if File.exist?(evaluated_path)
         crystal_path = evaluated_path.sub("#{Dir.getwd}/", '').sub(/\.rb$/, '')
-        puts "======> Successfully expanded the require path and found the file: #{evaluated_path}"
-        puts "======> Crystal require: #{crystal_path}"
+        log "======> Successfully expanded the require path and found the file: #{evaluated_path}"
+        log "======> Crystal require: #{crystal_path}"
       else
-        puts "======> ERROR: Could not find #{evaluated_path}! Please fix this require statement manually."
+        log "======> ERROR: Could not find #{evaluated_path}! Please fix this require statement manually."
       end
     end
 
     if crystal_path.nil? || crystal_path == ''
-      puts "ERROR: Couldn't parse and evaluate the Ruby require statement! Please update the require statement manually."
+      log "ERROR: Couldn't parse and evaluate the Ruby require statement! Please update the require statement manually."
       return nil
     end
     show_error_divider('', "\n")
@@ -1315,41 +1328,15 @@ class Rufo::Formatter
   end
 
   def show_requiring_files_docs
-    puts "===> Read the 'Requiring files' page in the Crystal docs:"
-    puts "===> https://crystal-lang.org/reference/syntax_and_semantics/requiring_files.html"
+    log "===> Read the 'Requiring files' page in the Crystal docs:"
+    log "===> https://crystal-lang.org/reference/syntax_and_semantics/requiring_files.html"
   end
 
   def show_error_divider(prefix = '', suffix = '')
-    puts "#{prefix}-------------------------------------------------------------------------------\n#{suffix}"
+    log "#{prefix}-------------------------------------------------------------------------------\n#{suffix}"
   end
 
-  def replace_require_statement(node, ident, args)
-    # Rufo doesn't replace single quotes with double quotes for require statements, so
-    # we have to fix that manually here. (The double quote replacement seems to work everywhere else.)
-    require_path = require_path_from_args(node, ident, args)
-
-    unless require_path
-      show_error_divider("\n")
-      (line_no, column_no), kind = current_token
-      puts "ERROR: Couldn't find a valid path argument for require! Error at line #{line_no}:#{column_no}:"
-      puts
-      puts @code_lines[line_no - 1]
-      puts
-      show_requiring_files_docs
-      show_error_divider('', "\n")
-      return false
-    end
-
-    if ident == "require_relative" && !require_path.match?(/^..\//) && !require_path.match?(/^.\//)
-      require_path = "./#{require_path}"
-    end
-
-    crystal_path = require_path
-
-    # Rewrite all the tokens on this line with the Crystal require statement.
-    # byebug
-
-    # Remove all of the tokens
+  def remove_current_command_from_tokens
     paren_count = 0
     while true
       token = @tokens.last
@@ -1368,6 +1355,33 @@ class Rufo::Formatter
       end
       @tokens.pop
     end
+  end
+
+  def replace_require_statement(node, ident, args)
+    # Rufo doesn't replace single quotes with double quotes for require statements, so
+    # we have to fix that manually here. (The double quote replacement seems to work everywhere else.)
+    require_path = require_path_from_args(node, ident, args)
+
+    unless require_path
+      show_error_divider("\n")
+      (line_no, column_no), kind = current_token
+      log "ERROR: Couldn't find a valid path argument for require! Error at line #{line_no}:#{column_no}:"
+      log
+      log @code_lines[line_no - 1]
+      log
+      show_requiring_files_docs
+      show_error_divider('', "\n")
+      return false
+    end
+
+    if ident == "require_relative" && !require_path.match?(/^..\//) && !require_path.match?(/^.\//)
+      require_path = "./#{require_path}"
+    end
+
+    crystal_path = require_path
+
+    # Rewrite all the tokens with the Crystal require statement.
+    remove_current_command_from_tokens
 
     @tokens += [
       [[0,0], :on_nl, "\n", nil],
@@ -1459,6 +1473,38 @@ class Rufo::Formatter
     #   name
     #   [:args_add_block, [[:@int, "1", [1, 8]]], block]]
     _, receiver, _, name, args = node
+
+
+    # Check for $: var and LOAD_PATH, which are unsupported in Crystal
+    if receiver[0] == :var_ref && receiver[1][0] == :@gvar
+      # byebug
+      var_name = receiver[1][1]
+      case var_name
+      when "$:", "$LOAD_PATH"
+        show_error_divider("\n")
+        (line_no, column_no), kind = current_token
+        log "ERROR: Can't use #{var_name} in a Crystal program! Error at line #{line_no}:#{column_no}:"
+        log
+        log @code_lines[line_no - 1]
+        log
+        log "Removing this line from the Crystal code."
+        log "You might be able to replace this with CRYSTAL_PATH if needed."
+        log "See: https://github.com/crystal-lang/crystal/wiki/Compiler-internals#the-compiler-class"
+        show_error_divider('', "\n")
+
+        remove_current_command_from_tokens
+        return
+      end
+    end
+
+    # if name.is_a?(Array) && name[0] == :@ident
+    #   ident = name[1]
+    #   case ident
+    #   when "require", "require_relative"
+    #     return if replace_require_statement(node, ident, args)
+    #   end
+    # end
+
 
     base_column = current_token_column
 
