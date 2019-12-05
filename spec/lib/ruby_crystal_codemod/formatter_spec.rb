@@ -28,7 +28,7 @@ def assert_source_specs(source_spec_path)
             line: index + 1,
             options: {},
             original: "",
-            source: source_spec_path
+            source: source_spec_path,
           }
         when !current_test
           next
@@ -66,7 +66,7 @@ def assert_source_specs(source_spec_path)
           test[:original],
           test[:source],
           File.dirname(test[:source]),
-          **options
+          **options,
         )
         expect(formatter.logs).to eq []
         formatter.format

@@ -1306,7 +1306,7 @@ class RubyCrystalCodemod::Formatter
       show_error_divider("\n")
       (line_no, column_no), _kind = current_token
       log "ERROR: String interpolation is not supported for Crystal require statements! " \
-        "Please update the require statement manually."
+          "Please update the require statement manually."
       log "Error at line #{line_no}:#{column_no}:"
       log
       log @code_lines[line_no - 1]
