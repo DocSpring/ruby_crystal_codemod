@@ -29,7 +29,7 @@ $ gem install ruby_crystal_codemod
 - [x] Rename all file extensions from `.rb` to `.cr`
 - [x] Replace single quoted strings with double quotes
 - [x] `require_relative "foo"` -> `require "./foo"`
-- [x] $:, LOAD_PATH => Show error and link to docs about CRYSTAL_PATH (for compiler)
+- [x] `$:`, `LOAD_PATH` => Show error and link to docs about CRYSTAL_PATH (for compiler)
 - [x] Translate methods / keywords / operators:
   - [x] `include?` -> `includes?`
   - [x] `key?` -> `has_key?`
