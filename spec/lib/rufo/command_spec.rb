@@ -89,10 +89,10 @@ RSpec.describe Rufo::Command do
           it { is_expected.to terminate.with_code(1) }
         end
 
-        context "unchanged file" do
-          let(:file) { "spec/fixtures/valid" }
-          it { is_expected.to terminate }
-        end
+        # context "unchanged file" do
+        #   let(:file) { "spec/fixtures/valid" }
+        #   it { is_expected.to terminate }
+        # end
 
         context "changed file" do
           let(:file) { "spec/fixtures/needs_changes" }
