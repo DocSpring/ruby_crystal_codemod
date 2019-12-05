@@ -1226,8 +1226,13 @@ class RubyCrystalCodemod::Formatter
     log
     log "#{require_string}"
     log
-    show_requiring_files_docs
+    unless require_string.include?("File.")
+      log "===> require args do not start with 'File.', so not attempting to evaluate the code.\n"
+      show_requiring_files_docs
+      return false
+    end
 
+    show_requiring_files_docs
     log "\n==> Attempting to expand and evaluate the Ruby require path..."
 
     # Expand __dir__ and __FILE__ into absolute paths
@@ -1252,6 +1257,10 @@ class RubyCrystalCodemod::Formatter
 
     if evaluated_path == nil || evaluated_path == ""
       log "ERROR: We tried to evaluate and expand the path, but it didn't return anything."
+    elsif !evaluated_path.is_a?(String)
+      log "====> Evaluated path was not a string! Please fix this require statement manually."
+      log "====> Result of Ruby evaluation: #{evaluated_path}"
+      return nil
     else
       if !evaluated_path.to_s.match?(/\.rb$/)
         evaluated_path = "#{evaluated_path}.rb"
@@ -1259,7 +1268,8 @@ class RubyCrystalCodemod::Formatter
       log "====> Evaluated Ruby path: #{evaluated_path}"
 
       if File.exist?(evaluated_path)
-        crystal_path = evaluated_path.sub("#{Dir.getwd}/", "").sub(/\.rb$/, "")
+        expanded_evaluated_path = File.expand_path(evaluated_path)
+        crystal_path = expanded_evaluated_path.sub("#{Dir.getwd}/", "").sub(/\.rb$/, "")
         log "======> Successfully expanded the require path and found the file: #{evaluated_path}"
         log "======> Crystal require: #{crystal_path}"
       else
@@ -1291,12 +1301,28 @@ class RubyCrystalCodemod::Formatter
     return unless (next_level = next_level[0]) && next_level.is_a?(Array)
     return unless next_level[0] == :string_literal && (next_level = next_level[1]) && next_level.is_a?(Array)
     return unless next_level[0] == :string_content && (next_level = next_level[1]) && next_level.is_a?(Array)
+
+    if next_level[0] == :string_embexpr
+      show_error_divider("\n")
+      (line_no, column_no), _kind = current_token
+      log "ERROR: String interpolation is not supported for Crystal require statements! " \
+        "Please update the require statement manually."
+      log "Error at line #{line_no}:#{column_no}:"
+      log
+      log @code_lines[line_no - 1]
+      log
+      show_requiring_files_docs
+      show_error_divider("", "\n")
+      return false
+    end
+
     return unless next_level[0] == :@tstring_content && (next_level = next_level[1]) && next_level.is_a?(String)
     next_level
   end
 
   def require_path_from_args(node, ident, args)
     simple_path = parse_simple_require_path(node, ident, args)
+    return false if simple_path == false
 
     if simple_path
       # We now know that this was a simple string arg (either in parens, or after a space)
@@ -1359,6 +1385,7 @@ class RubyCrystalCodemod::Formatter
     # RubyCrystalCodemod doesn't replace single quotes with double quotes for require statements, so
     # we have to fix that manually here. (The double quote replacement seems to work everywhere else.)
     require_path = require_path_from_args(node, ident, args)
+    return false if require_path == false
 
     unless require_path
       show_error_divider("\n")
