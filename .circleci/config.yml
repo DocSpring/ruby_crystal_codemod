@@ -15,11 +15,11 @@
     - run:
         name: Install Crystal
         command: >-
-          curl -sSL https://dist.crystal-lang.org/apt/setup.sh | sudo bash
-          curl -sL "https://keybase.io/crystal/pgp_keys.asc" | sudo apt-key add -
-          echo "deb https://dist.crystal-lang.org/apt crystal main" | sudo tee /etc/apt/sources.list.d/crystal.list
-          sudo apt-get update
-          sudo apt-get -y install crystal
+          curl -sSL https://dist.crystal-lang.org/apt/setup.sh | bash &&
+          curl -sL "https://keybase.io/crystal/pgp_keys.asc" | apt-key add - &&
+          echo "deb https://dist.crystal-lang.org/apt crystal main" >> /etc/apt/sources.list.d/crystal.list &&
+          apt-get update &&
+          apt-get -y install crystal &&
           crystal --version
 
     # Restore bundle cache
