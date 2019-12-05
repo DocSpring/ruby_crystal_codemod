@@ -56,6 +56,7 @@ run `crystal tool format` to format the generated code.
   - [x] `foo.each(&:method)` -> `foo.each(&.method)`
   - [x] `foo.map &:method` -> `foo.map &.method`
 - [ ] private / protected methods
+- [ ] 'class << self' => def self. (?)
 - [ ] Sorbet Type Annotations -> Crystal type annotations
 
 ## Testing
