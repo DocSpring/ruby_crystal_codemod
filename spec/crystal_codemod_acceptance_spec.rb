@@ -3,7 +3,7 @@ require "open3"
 
 RSpec.describe "Crystal Codemod" do
   it "transpiles the example Ruby code into Crystal and produces the same output" do
-    root_folder = File.expand_path(File.join(__dir__, "../../.."))
+    root_folder = File.expand_path(File.join(__dir__, "../"))
 
     crystal_files = Dir.glob(File.join(root_folder, "spec/fixtures/**/*.cr"))
     FileUtils.rm_rf(crystal_files)
