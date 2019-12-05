@@ -1195,9 +1195,9 @@ class Rufo::Formatter
 
   # Parses any Ruby code, and attempts to evaluate it
   #   require File.expand_path('./nested_require', File.dirname(__FILE__))
-  def parse_require_path_from_ruby_code(node, ident, next_level)
+  def parse_require_path_from_ruby_code(_node, _ident, _next_level)
     crystal_path = nil
-    (line_no, column_no), kind = current_token
+    (line_no, column_no), _kind = current_token
 
     # Need to figure out all of the Ruby code to execute, which may span across multiple lines.
     # This heuristic probably won't work for all valid Ruby code, but it's a good start.
@@ -1245,10 +1245,12 @@ class Rufo::Formatter
     evaluated_path = nil
     begin
       log "====> Evaluating Ruby code: #{expanded_require_string}"
+      # rubocop:disable Security/Eval
       evaluated_path = eval(expanded_require_string)
-    rescue Exception => ex
+      # rubocop:enable Security/Eval
+    rescue StandardError => e
       log "ERROR: We tried to evaluate and expand the path, but it crashed with an error:"
-      log ex
+      log e
     end
 
     if evaluated_path == nil || evaluated_path == ""
@@ -1282,7 +1284,7 @@ class Rufo::Formatter
   #   require_relative "test"
   #   require_relative("test")
   #   require("test")
-  def parse_simple_require_path(node, ident, next_level)
+  def parse_simple_require_path(_node, _ident, next_level)
     return unless next_level.is_a?(Array)
 
     if next_level[0] == :arg_paren
@@ -1303,8 +1305,8 @@ class Rufo::Formatter
       # We now know that this was a simple string arg (either in parens, or after a space)
       # So now we need to see if it's a single or double quoted string.
       quote_char = nil
-      @tokens.reverse_each.with_index do |token, i|
-        (line_no, column_no), kind = token
+      @tokens.reverse_each.with_index do |token, _i|
+        (_line_no, _column_no), kind = token
         case kind
         when :on_tstring_beg
           quote_char = token[2]
@@ -1313,7 +1315,6 @@ class Rufo::Formatter
         end
       end
       unless quote_char
-        byebug
         raise "Couldn't figure out the quote type for this string!"
       end
 
@@ -1338,7 +1339,7 @@ class Rufo::Formatter
 
   def remove_current_command_from_tokens
     paren_count = 0
-    while true
+    loop do
       token = @tokens.last
       raise "[Infinite loop bug] Ran out of tokens!" unless token
       _, name = token
@@ -1364,7 +1365,7 @@ class Rufo::Formatter
 
     unless require_path
       show_error_divider("\n")
-      (line_no, column_no), kind = current_token
+      (line_no, column_no), _kind = current_token
       log "ERROR: Couldn't find a valid path argument for require! Error at line #{line_no}:#{column_no}:"
       log
       log @code_lines[line_no - 1]
@@ -1482,7 +1483,7 @@ class Rufo::Formatter
       case var_name
       when "$:", "$LOAD_PATH"
         show_error_divider("\n")
-        (line_no, column_no), kind = current_token
+        (line_no, column_no), _kind = current_token
         log "ERROR: Can't use #{var_name} in a Crystal program! Error at line #{line_no}:#{column_no}:"
         log
         log @code_lines[line_no - 1]

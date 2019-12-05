@@ -22,6 +22,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
   spec.required_ruby_version = ">= 2.4.5"
 
+  spec.add_development_dependency "awesome_print", "~> 1.8.0"
   spec.add_development_dependency "bundler", ">= 1.15"
   spec.add_development_dependency "byebug", "~> 10.0.2"
   spec.add_development_dependency "guard-rspec", "~> 4.0"
@@ -29,5 +30,4 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec", "~> 3.0"
   spec.add_development_dependency "rspec_junit_formatter", "~> 0.4.1"
   spec.add_development_dependency "rubocop", "~> 0.63.1"
-  spec.add_development_dependency "awesome_print", "~> 1.8.0"
 end
