@@ -37,7 +37,7 @@ run `crystal tool format` to format the generated code.
 
 ## Writing Ruby / Crystal in the same file
 
-If you want to write Ruby and Crystal in a Ruby file, you can use some
+If you want to write both Ruby and Crystal in a Ruby file, you can use some
 special `#~# BEGIN <language>` and `#~# END <language>` comments.
 Code between `#~# BEGIN ruby` and `#~# END ruby` should be uncommented,
 and code between `#~# BEGIN crystal` and `#~# END crystal` should be commented.
@@ -104,6 +104,9 @@ end
 - [ ] `private` / `protected` methods
 - [ ] `class << self` => `def self.foo` (?)
 - [ ] `YAML.load_file("./foo.yml")` => `YAML.parse(File.read("./foo.yml"))`
+- [ ] .each returns nil - Try to warn if it looks like the return value of `.each` is being used
+- [ ] for loops - Show a warning or link to the docs
+- [ ] Consistent dot notation - `File::exists?` => `File.exists?`
 
 ## Future
 
