@@ -41,8 +41,9 @@ If you want to write Ruby and Crystal in a Ruby file, you can use some
 special `#~# BEGIN <language>` and `#~# END <language>` comments.
 Code between `#~# BEGIN ruby` and `#~# END ruby` should be uncommented,
 and code between `#~# BEGIN crystal` and `#~# END crystal` should be commented.
-When transpiling a Ruby file into Crystal, the transpiler will remove any of the specific Ruby lines,
-and uncomment the crystal lines.
+When transpiling a Ruby file into Crystal, the transpiler will remove all of the Ruby lines between these comments, and it will uncomment all of the Crystal lines.
+
+> This comment post-processing step is done by a Crystal program in `./util/post_process_crystal`. Run `./bin/compile_post_process` to compile the binary at `./util/post_process`.
 
 For example, here's how you can define a class that works for both Ruby and Crystal:
 (Crystal requires type annotations here.)
@@ -58,7 +59,7 @@ class Foo
   #~# END ruby
   #~# BEGIN crystal
   # @foo : Int32
-  # def initialize(@foo: Int32); end
+  # def initialize(@foo : Int32); end
   #~# END crystal
 end
 ```
@@ -70,15 +71,13 @@ class Foo
   property :foo
 
   @foo : Int32
-  def initialize(@foo: Int32); end
+  def initialize(@foo : Int32); end
 end
 ```
 
 (The transpiler automatically renames `attr_accessor` to `property`.)
 
-> This comment post-processing step is done by a Crystal program in `./util/post_process_crystal`. Run `./bin/compile_post_process` to compile the binary at `./util/post_process`.
-
-> See `spec/fixtures/crystal_codemod_test/example.rb:87` for a real-world example that is used in an acceptance spec.
+> See [`spec/fixtures/crystal_codemod_test/example.rb:87`](https://github.com/DocSpring/ruby_crystal_codemod/blob/master/spec/fixtures/crystal_codemod_test/example.rb#L87-L114) for a real-world example that is used in our acceptance specs.
 
 ## Status
 
