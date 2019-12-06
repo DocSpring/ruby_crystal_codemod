@@ -34,8 +34,8 @@
         command: bundle check || bundle install
 
     - run:
-      name: Compile ./util/post_process tool
-      command: ./bin/compile_post_process
+        name: Compile ./util/post_process tool
+        command: ./bin/compile_post_process
 
     - run:
         name: Run rspec
