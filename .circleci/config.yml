@@ -33,6 +33,11 @@
         name: Bundle Install
         command: bundle check || bundle install
 
+    # Restore crystal cache
+    - restore_cache:
+        keys:
+          - crystal-shards-{{ checksum "util/post_process_crystal/shard.lock" }}
+
     - run:
         name: Compile ./util/post_process tool
         command: ./bin/compile_post_process
@@ -52,6 +57,13 @@
         name: Run Rufo
         command: |
           bundle exec rufo -c lib/ spec/lib/
+
+    # Store crystal cache
+    - save_cache:
+        key: crystal-shards-{{ checksum "util/post_process_crystal/shard.lock" }}
+        paths:
+          - util/post_process_crystal/lib/
+          - util/post_process_crystal/shard.lock
 
     # Store bundle cache
     - save_cache:
