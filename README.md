@@ -104,7 +104,11 @@ end
 - [ ] `private` / `protected` methods
 - [ ] `class << self` => `def self.foo` (?)
 - [ ] `YAML.load_file("./foo.yml")` => `YAML.parse(File.read("./foo.yml"))`
-- [ ] Sorbet Type Annotations -> Crystal type annotations
+
+## Future
+
+* Sorbet Type Annotations -> Crystal type annotations
+* Instrument a Ruby program to track of all the variable assignments at run-time. Store all of the classes that are detected in each variable (including the maximum values of integers, etc.) Convert this run-time type information into Sorbet/Crystal type annotations.
 
 ## Testing
 
