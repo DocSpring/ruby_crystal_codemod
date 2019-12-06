@@ -43,6 +43,8 @@ Code between `#~# BEGIN ruby` and `#~# END ruby` should be uncommented,
 and code between `#~# BEGIN crystal` and `#~# END crystal` should be commented.
 When transpiling a Ruby file into Crystal, the transpiler will remove all of the Ruby lines between these comments, and it will uncomment all of the Crystal lines.
 
+The `BEGIN` / `END` comments can start with either `#~#` or `# ~#`. (Code formatters / linters often enforce a space after the `#` character for comments.)
+
 > This comment post-processing step is done by a Crystal program in `./util/post_process_crystal`. Run `./bin/compile_post_process` to compile the binary at `./util/post_process`.
 
 For example, here's how you can define a class that works for both Ruby and Crystal:
