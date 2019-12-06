@@ -55,11 +55,11 @@ run `crystal tool format` to format the generated code.
   - [x] `not` -> `!`
   - [x] `foo.each(&:method)` -> `foo.each(&.method)`
   - [x] `foo.map &:method` -> `foo.map &.method`
+- [x] `attr_accessor` => `property`
+- [x] `attr_reader` => `getter`
+- [x] `attr_writer` => `setter`
 - [ ] `private` / `protected` methods
 - [ ] `class << self` => `def self.foo` (?)
-- [ ] `attr_accessor` => `property`
-- [ ] `attr_reader` => `g`etter`
-- [ ] `attr_writer` => `setter`
 - [ ] `YAML.load_file("./foo.yml")` => `YAML.parse(File.read("./foo.yml"))`
 - [ ] Sorbet Type Annotations -> Crystal type annotations
 

@@ -74,3 +74,44 @@ upcase = arr.map &.upcase
 puts upcase.join(" ")
 up_reverse = arr.map(&.upcase).map &.reverse
 puts up_reverse.to_s
+
+class Foo
+  attr_accessor :foo
+  attr_writer :bar
+  attr_reader :baz
+
+  # ~# BEGIN ruby
+  def initialize(foo, bar, baz)
+    @foo = foo
+    @bar = bar
+    @baz = baz
+  end
+
+  # ~# END ruby
+  # ~# BEGIN crystal
+  # @foo : Int32
+  # @bar : Int32
+  # @baz : Int32
+  # def initialize(@foo: Int32, @bar : Int32, @baz : Int32)
+  # end
+  # ~# END crystal
+
+  def bar
+    @bar
+  end
+
+  def baz=(val)
+    @baz = val
+  end
+end
+
+foo = Foo.new(1, 100, 1000)
+puts "foo: #{foo.foo}"
+puts "bar: #{foo.bar}"
+puts "baz: #{foo.baz}"
+foo.foo *= 2
+puts "foo: #{foo.foo}"
+foo.bar *= 2
+puts "bar: #{foo.bar}"
+foo.baz *= 2
+puts "baz: #{foo.baz}"

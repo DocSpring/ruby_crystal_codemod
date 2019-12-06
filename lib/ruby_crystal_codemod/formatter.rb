@@ -3461,6 +3461,12 @@ class RubyCrystalCodemod::Formatter
         value = "responds_to?"
       when "length", "count"
         value = "size"
+      when "attr_accessor"
+        value = "property"
+      when "attr_reader"
+        value = "getter"
+      when "attr_writer"
+        value = "setter"
       end
     end
 
