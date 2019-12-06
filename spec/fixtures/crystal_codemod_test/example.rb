@@ -100,7 +100,7 @@ class Foo
   # @foo : Int32
   # @bar : Int32
   # @baz : Int32
-  # def initialize(@foo: Int32, @bar : Int32, @baz : Int32)
+  # def initialize(@foo : Int32, @bar : Int32, @baz : Int32)
   # end
   #~# END crystal
 

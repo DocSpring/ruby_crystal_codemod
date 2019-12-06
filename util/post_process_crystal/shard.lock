@@ -1,0 +1,14 @@
+version: 1.0
+shards:
+  mocks:
+    github: DocSpring/mocks.cr
+    commit: b098c6ae8a34509df88baf4d3664471cd223bdfe
+
+  singleton:
+    github: waterlink/singleton.cr
+    version: 1.0.0
+
+  spectator:
+    gitlab: arctic-fox/spectator
+    version: 0.8.3
+

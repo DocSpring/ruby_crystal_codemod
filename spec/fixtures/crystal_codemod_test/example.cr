@@ -76,25 +76,16 @@ up_reverse = arr.map(&.upcase).map &.reverse
 puts up_reverse.to_s
 
 class Foo
-  attr_accessor :foo
-  attr_writer :bar
-  attr_reader :baz
+  property :foo
+  setter :bar
+  getter :baz
 
-  # ~# BEGIN ruby
-  def initialize(foo, bar, baz)
-    @foo = foo
-    @bar = bar
-    @baz = baz
+  @foo : Int32
+  @bar : Int32
+  @baz : Int32
+
+  def initialize(@foo : Int32, @bar : Int32, @baz : Int32)
   end
-
-  # ~# END ruby
-  # ~# BEGIN crystal
-  # @foo : Int32
-  # @bar : Int32
-  # @baz : Int32
-  # def initialize(@foo: Int32, @bar : Int32, @baz : Int32)
-  # end
-  # ~# END crystal
 
   def bar
     @bar

@@ -113,6 +113,19 @@ class RubyCrystalCodemod::Command
       logger.log("Format: #{filename} => #{crystal_filename}")
     end
 
+    # Run the post-processing command to handle BEGIN and END comments for Ruby / Crystal.
+    post_process_cmd = File.expand_path(File.join(__dir__, '../../util/post_process'))
+    unless File.exist?(post_process_cmd)
+      raise "Please run ./bin/compile_post_process to compile the post-processing command " \
+        "at: #{post_process_cmd}"
+    end
+    stdout, stderr, status = Open3.capture3(post_process_cmd, crystal_filename)
+    unless status.success?
+      warn "'./util/post_process' failed with status: #{status.exitstatus}\n\n" \
+           "stdout: #{stdout}\n\n" \
+           "stderr: #{stderr}"
+    end
+
     # Format the Crystal file with the Crystal code formatter
     stdout, stderr, status = Open3.capture3("crystal", "tool", "format", crystal_filename)
     unless status.success?

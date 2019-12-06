@@ -1,0 +1,11 @@
+name: process_comments
+version: 0.1.0
+
+development_dependencies:
+  spectator:
+    gitlab: arctic-fox/spectator
+  mocks:
+    github: DocSpring/mocks.cr
+    branch: updates_for_0.31.1
+
+license: MIT

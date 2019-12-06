@@ -1,0 +1,4 @@
+#!/bin/bash
+set -e
+(cd util/post_process_crystal && shards install)
+crystal build --release util/post_process_crystal/src/command.cr -o util/post_process
