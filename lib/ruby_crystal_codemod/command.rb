@@ -20,6 +20,7 @@ class RubyCrystalCodemod::Command
     @dot_file = RubyCrystalCodemod::DotFile.new
     @squiggly_warning_files = []
     @logger = RubyCrystalCodemod::Logger.new(loglevel)
+    @post_processor = PostProcessCrystal.new
   end
 
   def exit_code(status_code)
@@ -113,18 +114,24 @@ class RubyCrystalCodemod::Command
       logger.log("Format: #{filename} => #{crystal_filename}")
     end
 
-    # Run the post-processing command to handle BEGIN and END comments for Ruby / Crystal.
-    post_process_cmd = File.expand_path(File.join(__dir__, "../../util/post_process"))
-    unless File.exist?(post_process_cmd)
-      raise "Please run ./bin/compile_post_process to compile the post-processing command " \
-            "at: #{post_process_cmd}"
-    end
-    stdout, stderr, status = Open3.capture3(post_process_cmd, crystal_filename)
-    unless status.success?
-      warn "'./util/post_process' failed with status: #{status.exitstatus}\n\n" \
-           "stdout: #{stdout}\n\n" \
-           "stderr: #{stderr}"
-    end
+    # Run the post-processing step to remove Ruby code and uncomment Crystal.
+    @post_processor.filename = crystal_filename
+    @post_processor.post_process_crystal
+    File.write(crystal_filename, @post_processor.contents)
+
+    # UPDATE: It's difficult to package/compile the Crystal binary in a Ruby gem.
+    # But it was really easy to port it to Ruby!
+    # post_process_cmd = File.expand_path(File.join(__dir__, "../../util/post_process"))
+    # unless File.exist?(post_process_cmd)
+    #   raise "Please run ./bin/compile_post_process to compile the post-processing command " \
+    #         "at: #{post_process_cmd}"
+    # end
+    # stdout, stderr, status = Open3.capture3(post_process_cmd, crystal_filename)
+    # unless status.success?
+    #   warn "'./util/post_process' failed with status: #{status.exitstatus}\n\n" \
+    #        "stdout: #{stdout}\n\n" \
+    #        "stderr: #{stderr}"
+    # end
 
     # Format the Crystal file with the Crystal code formatter
     stdout, stderr, status = Open3.capture3("crystal", "tool", "format", crystal_filename)

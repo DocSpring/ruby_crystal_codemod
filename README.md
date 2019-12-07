@@ -8,7 +8,12 @@ This project is a fork of [Rufo](https://github.com/ruby-formatter/rufo). (Rufo 
 
 The formatting rules have been modified in an attempt to produce some semi-valid Crystal code. Then you need to add some type annotations and fix any other issues manually. See the [Crystal for Rubyists](https://github.com/crystal-lang/crystal/wiki/Crystal-for-Rubyists) wiki page to learn more about the syntax differences.
 
-> Ruby => Crystal Codemod / Rufo supports all Ruby versions >= 2.4.**5**, due to a bug in Ruby's Ripper parser.
+> Ruby => Crystal Codemod / Rufo supports all Ruby versions >= 2.4.5, due to a bug in Ruby's Ripper parser.
+
+## Requirements
+
+* Ruby >= `2.4.5`
+* [Crystal](https://crystal-lang.org/install/) >= `0.31.1`
 
 ## Installation
 
@@ -44,8 +49,6 @@ and code between `#~# BEGIN crystal` and `#~# END crystal` should be commented.
 When transpiling a Ruby file into Crystal, the transpiler will remove all of the Ruby lines between these comments, and it will uncomment all of the Crystal lines.
 
 The `BEGIN` / `END` comments can start with either `#~#` or `# ~#`. (Code formatters / linters often enforce a space after the `#` character for comments.)
-
-> This comment post-processing step is done by a Crystal program in `./util/post_process_crystal`. Run `./bin/compile_post_process` to compile the binary at `./util/post_process`.
 
 For example, here's how you can define a class that works for both Ruby and Crystal:
 (Crystal requires type annotations here.)
