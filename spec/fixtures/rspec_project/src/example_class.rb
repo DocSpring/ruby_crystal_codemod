@@ -1,9 +1,12 @@
-class ExampleClass
-  attr_accessor :foo, :bar
+# typed: ignore
 
-  def initialize(foo, bar)
+class ExampleClass
+  attr_accessor :foo, :bar, :qux
+
+  def initialize(foo, bar, qux)
     @foo = foo
     @bar = bar
+    @qux = qux
   end
 
   def baz=(val)
@@ -11,7 +14,7 @@ class ExampleClass
   end
 
   def add(val = 0)
-    @foo + @bar + val + (@baz || 0)
+    @foo + @bar + @qux + val + (@baz || 0)
   end
 
   def self.whisper(str)

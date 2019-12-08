@@ -1,10 +1,11 @@
+# typed: strict
 $:.push(File.expand_path("../..", __FILE__))
 $:.push(File.dirname(__FILE__))
 
 require 'rspec'
-require 'gelauto'
 require 'pry-byebug'
-require 'src/example_class'
+require 'sorbet-runtime'
+require 'src/example_class_annotated'
 
 Dir.chdir('spec') do
   Dir.glob('support/*.rb').each do |f|

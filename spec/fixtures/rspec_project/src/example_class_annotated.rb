@@ -1,10 +1,15 @@
+# typed: true
+
 class ExampleClass
+  extend T::Sig
+
   attr_accessor :foo, :bar
 
-  sig { params(foo: Integer, bar: T.any(Integer, Symbol)).void }
-  def initialize(foo, bar)
+  sig { params(foo: T.nilable(Integer), bar: T.any(Integer, Symbol), qux: Integer).void }
+  def initialize(foo, bar, qux)
     @foo = foo
     @bar = bar
+    @qux = qux
   end
 
   sig { params(val: Integer).returns(Integer) }
@@ -14,7 +19,7 @@ class ExampleClass
 
   sig { params(val: Integer).returns(Integer) }
   def add(val = 0)
-    @foo + @bar + val + (@baz || 0)
+    @foo + @bar + @qux + val + (@baz || 0)
   end
 
   sig { params(str: String).returns(String) }
