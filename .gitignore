@@ -22,3 +22,5 @@ test.cr
 util/post_process
 util/post_process_crystal/lib/
 *.dwarf
+
+spec/fixtures/rspec_project/.git
