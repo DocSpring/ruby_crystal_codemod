@@ -116,7 +116,7 @@ end
 ## Future
 
 * Sorbet Type Annotations -> Crystal type annotations
-* Instrument a Ruby program to track of all the variable assignments at run-time. Store all of the classes that are detected in each variable (including the maximum values of integers, etc.) Convert this run-time type information into Sorbet/Crystal type annotations.
+  * Integration with [gelauto](https://github.com/camertron/gelauto), to automatically annotate Ruby code with Sorbet type definitions.
 
 ## Testing
 
