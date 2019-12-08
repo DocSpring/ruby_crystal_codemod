@@ -4,7 +4,7 @@ $:.push(File.dirname(__FILE__))
 require 'rspec'
 require 'gelauto'
 require 'pry-byebug'
-require 'lib/example_class'
+require 'src/example_class'
 
 Dir.chdir('spec') do
   Dir.glob('support/*.rb').each do |f|
@@ -13,4 +13,4 @@ Dir.chdir('spec') do
 end
 
 # quiet logs for test runs
-Gelauto.logger.level = :fatal
+# Gelauto.logger.level = :fatal

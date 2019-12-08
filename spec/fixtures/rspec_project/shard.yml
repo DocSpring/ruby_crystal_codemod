@@ -1,0 +1,8 @@
+name: example_class
+version: 0.1.0
+
+development_dependencies:
+  spectator:
+    gitlab: arctic-fox/spectator
+
+license: MIT

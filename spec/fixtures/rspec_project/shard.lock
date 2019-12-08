@@ -1,0 +1,6 @@
+version: 1.0
+shards:
+  spectator:
+    gitlab: arctic-fox/spectator
+    version: 0.8.3
+

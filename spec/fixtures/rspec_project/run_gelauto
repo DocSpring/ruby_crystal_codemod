@@ -1,0 +1,2 @@
+#!/bin/bash
+gelauto run --annotate $(find . -name '*.rb') -- bundle exec rspec spec/

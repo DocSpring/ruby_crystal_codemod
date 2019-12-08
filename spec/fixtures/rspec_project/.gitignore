@@ -1,3 +1,4 @@
 .git
 .bundle
+lib
 Gemfile.lock
