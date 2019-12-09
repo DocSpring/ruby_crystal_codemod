@@ -1,2 +1,3 @@
 --format documentation
 --color
+--exclude-pattern spec/fixtures/rspec_project/**/*

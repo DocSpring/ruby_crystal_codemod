@@ -6,6 +6,7 @@ RSpec.describe "Crystal Codemod" do
     root_folder = File.expand_path(File.join(__dir__, "../"))
 
     crystal_files = Dir.glob(File.join(root_folder, "spec/fixtures/**/*.cr"))
+    crystal_files -= Dir.glob(File.join(root_folder, "spec/fixtures/rspec_project/**/*.cr"))
     FileUtils.rm_rf(crystal_files)
 
     source_folder = File.join(root_folder, "spec/fixtures/crystal_codemod_test")
