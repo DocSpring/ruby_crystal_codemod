@@ -23,10 +23,10 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = ">= 2.4.5"
 
   spec.add_dependency "gelauto", "~> 1.3.0"
+  spec.add_dependency "byebug", "~> 10.0.2"
 
   spec.add_development_dependency "awesome_print", "~> 1.8.0"
   spec.add_development_dependency "bundler", ">= 1.15"
-  spec.add_development_dependency "byebug", "~> 10.0.2"
   spec.add_development_dependency "guard-rspec", "~> 4.0"
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec", "~> 3.0"
