@@ -3449,6 +3449,8 @@ class RubyCrystalCodemod::Formatter
       case value
       when "__dir__"
         value = "__DIR__"
+      when "kind_of?"
+        value = "is_a?"
       when "include?"
         value = "includes?"
       when "key?"
